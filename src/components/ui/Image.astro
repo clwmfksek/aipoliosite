@@ -7,18 +7,18 @@ interface Props extends ImageProps {
   priority?: boolean;
 }
 
-const { 
-  src, 
-  alt, 
-  width, 
-  height, 
-  lazy = true, 
-  rounded = false, 
+const {
+  src,
+  alt,
+  width,
+  height,
+  lazy = true,
+  rounded = false,
   class: className = '',
   aspectRatio = 'auto',
   objectFit = 'cover',
   priority = false,
-  ...rest 
+  ...rest
 } = Astro.props;
 
 // 기본 스타일
@@ -29,10 +29,10 @@ const roundedStyles = {
   false: '',
   true: 'rounded-lg',
   sm: 'rounded',
-  md: 'rounded-md', 
+  md: 'rounded-md',
   lg: 'rounded-lg',
   xl: 'rounded-xl',
-  full: 'rounded-full'
+  full: 'rounded-full',
 };
 
 // 종횡비 스타일
@@ -41,7 +41,7 @@ const aspectRatioStyles = {
   square: 'aspect-square',
   video: 'aspect-video',
   portrait: 'aspect-[3/4]',
-  landscape: 'aspect-[4/3]'
+  landscape: 'aspect-[4/3]',
 };
 
 // 객체 맞춤 스타일
@@ -50,7 +50,7 @@ const objectFitStyles = {
   contain: 'object-contain',
   fill: 'object-fill',
   none: 'object-none',
-  scale: 'object-scale-down'
+  scale: 'object-scale-down',
 };
 
 // 최종 클래스 조합
@@ -59,11 +59,13 @@ const imageClasses = [
   roundedStyles[rounded as keyof typeof roundedStyles] || roundedStyles[false],
   aspectRatioStyles[aspectRatio],
   objectFitStyles[objectFit],
-  className
-].filter(Boolean).join(' ');
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 
 // 로딩 속성 설정
-const loadingAttr = priority ? 'eager' : (lazy ? 'lazy' : 'eager');
+const loadingAttr = priority ? 'eager' : lazy ? 'lazy' : 'eager';
 ---
 
 <img
@@ -77,12 +79,12 @@ const loadingAttr = priority ? 'eager' : (lazy ? 'lazy' : 'eager');
 />
 
 <style>
-  img[loading="lazy"] {
+  img[loading='lazy'] {
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
   }
-  
-  img[loading="lazy"].loaded {
+
+  img[loading='lazy'].loaded {
     opacity: 1;
   }
 </style>
@@ -90,11 +92,11 @@ const loadingAttr = priority ? 'eager' : (lazy ? 'lazy' : 'eager');
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-    
+
     lazyImages.forEach(img => {
       (img as HTMLImageElement).addEventListener('load', () => {
         img.classList.add('loaded');
       });
     });
   });
-</script> 
+</script>

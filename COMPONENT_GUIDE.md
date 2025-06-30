@@ -3,6 +3,7 @@
 이 문서는 Astro 포트폴리오 프로젝트의 모든 UI 컴포넌트 사용법을 설명합니다.
 
 ## 📋 목차
+
 - [기본 사용법](#기본-사용법)
 - [UI 컴포넌트](#ui-컴포넌트)
   - [Button](#button)
@@ -38,6 +39,7 @@ import Card from '../components/ui/Card.astro';
 다양한 스타일과 상태를 지원하는 버튼 컴포넌트입니다.
 
 #### Props
+
 - `variant`: `'primary' | 'secondary' | 'outline' | 'ghost'` (기본값: `'primary'`)
 - `size`: `'sm' | 'md' | 'lg'` (기본값: `'md'`)
 - `href`: `string` - 링크 버튼으로 사용 시
@@ -76,6 +78,7 @@ import Card from '../components/ui/Card.astro';
 콘텐츠를 감싸는 카드 컨테이너 컴포넌트입니다.
 
 #### Props
+
 - `variant`: `'default' | 'bordered' | 'elevated'` (기본값: `'default'`)
 - `padding`: `'sm' | 'md' | 'lg'` (기본값: `'md'`)
 - `hoverable`: `boolean` - 호버 효과 (기본값: `false`)
@@ -106,6 +109,7 @@ import Card from '../components/ui/Card.astro';
 기술 스택이나 카테고리를 표시하는 태그 컴포넌트입니다.
 
 #### Props
+
 - `variant`: `'filled' | 'outline' | 'ghost'` (기본값: `'filled'`)
 - `color`: `'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'danger'` (기본값: `'primary'`)
 - `size`: `'sm' | 'md' | 'lg'` (기본값: `'md'`)
@@ -128,10 +132,11 @@ import Card from '../components/ui/Card.astro';
 ```
 
 #### 이벤트
+
 태그가 제거되면 `tag-removed` 커스텀 이벤트가 발생합니다:
 
 ```javascript
-document.addEventListener('tag-removed', (e) => {
+document.addEventListener('tag-removed', e => {
   console.log('제거된 태그:', e.detail.text);
 });
 ```
@@ -141,6 +146,7 @@ document.addEventListener('tag-removed', (e) => {
 상태나 알림을 표시하는 배지 컴포넌트입니다.
 
 #### Props
+
 - `variant`: `'filled' | 'outline' | 'soft'` (기본값: `'filled'`)
 - `color`: `'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'danger' | 'info'` (기본값: `'primary'`)
 - `size`: `'sm' | 'md' | 'lg'` (기본값: `'md'`)
@@ -168,6 +174,7 @@ document.addEventListener('tag-removed', (e) => {
 다양한 스타일을 지원하는 링크 컴포넌트입니다.
 
 #### Props
+
 - `href`: `string` - 링크 주소 (필수)
 - `variant`: `'default' | 'secondary' | 'accent' | 'muted'` (기본값: `'default'`)
 - `size`: `'sm' | 'md' | 'lg'` (기본값: `'md'`)
@@ -194,6 +201,7 @@ document.addEventListener('tag-removed', (e) => {
 최적화와 lazy loading을 지원하는 이미지 컴포넌트입니다.
 
 #### Props
+
 - `src`: `string | ImageMetadata` - 이미지 소스 (필수)
 - `alt`: `string` - 대체 텍스트 (필수)
 - `width`: `number` - 너비
@@ -214,8 +222,8 @@ import projectImage from '../assets/project.jpg';
 <Image src={projectImage} alt="프로젝트 스크린샷" />
 
 <!-- 둥근 모서리와 종횡비 -->
-<Image 
-  src="/avatar.jpg" 
+<Image
+  src="/avatar.jpg"
   alt="프로필 사진"
   width={200}
   height={200}
@@ -231,6 +239,7 @@ import projectImage from '../assets/project.jpg';
 다크/라이트 모드를 전환하는 테마 토글 컴포넌트입니다.
 
 #### Props
+
 - `size`: `'sm' | 'md' | 'lg'` (기본값: `'md'`)
 - `showLabel`: `boolean` - 라벨 표시 여부 (기본값: `false`)
 
@@ -248,10 +257,11 @@ import projectImage from '../assets/project.jpg';
 ```
 
 #### 이벤트
+
 테마가 변경되면 `theme-changed` 커스텀 이벤트가 발생합니다:
 
 ```javascript
-document.addEventListener('theme-changed', (e) => {
+document.addEventListener('theme-changed', e => {
   console.log('테마 변경:', e.detail.theme);
   console.log('이전 테마:', e.detail.previousTheme);
 });
@@ -295,6 +305,7 @@ interface ButtonProps {
 ## 베스트 프랙티스
 
 ### 1. 일관성 있는 크기 사용
+
 ```astro
 <!-- 좋은 예 -->
 <Button size="md">버튼</Button>
@@ -306,6 +317,7 @@ interface ButtonProps {
 ```
 
 ### 2. 의미 있는 색상 사용
+
 ```astro
 <!-- 좋은 예 -->
 <Badge color="success">완료</Badge>
@@ -317,6 +329,7 @@ interface ButtonProps {
 ```
 
 ### 3. 접근성 고려
+
 ```astro
 <!-- 좋은 예 -->
 <Button aria-label="메뉴 열기">
@@ -328,14 +341,14 @@ interface ButtonProps {
 ```
 
 ### 4. 반응형 디자인
+
 ```astro
 <!-- 모바일에서는 전체 너비 버튼 사용 -->
-<Button fullWidth class="md:w-auto">
-  액션 버튼
-</Button>
+<Button fullWidth class="md:w-auto"> 액션 버튼 </Button>
 ```
 
 ### 5. 컴포넌트 조합
+
 ```astro
 <!-- 카드 안에 다양한 컴포넌트 조합 -->
 <Card variant="bordered" hoverable>
@@ -345,9 +358,7 @@ interface ButtonProps {
       <Tag color="primary">React</Tag>
       <Tag color="success">TypeScript</Tag>
     </div>
-    <Button href="/projects/1" variant="outline">
-      자세히 보기
-    </Button>
+    <Button href="/projects/1" variant="outline"> 자세히 보기 </Button>
   </div>
 </Card>
 ```
@@ -370,4 +381,4 @@ npm run dev
 
 ---
 
-더 자세한 정보는 각 컴포넌트의 소스 코드를 참조하거나 [COMPONENT_STRUCTURE.md](./COMPONENT_STRUCTURE.md)를 확인하세요. 
+더 자세한 정보는 각 컴포넌트의 소스 코드를 참조하거나 [COMPONENT_STRUCTURE.md](./COMPONENT_STRUCTURE.md)를 확인하세요.

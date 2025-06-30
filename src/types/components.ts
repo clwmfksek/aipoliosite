@@ -266,4 +266,4 @@ export interface PaginationProps {
   showFirstLast?: boolean;
   maxVisiblePages?: number;
   class?: string;
-} 
+}

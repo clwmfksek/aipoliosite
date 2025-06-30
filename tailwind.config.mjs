@@ -1,17 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: {
-    files: [
-      './src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}',
-      './public/**/*.html',
-    ],
+    files: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}', './public/**/*.html'],
     // 성능 최적화: 더 세밀한 검색 패턴
     extract: {
-      astro: (content) => {
+      astro: content => {
         // Astro 파일에서 클래스명을 더 정확하게 추출
         return content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || [];
-      }
-    }
+      },
+    },
   },
   darkMode: 'class',
   // JIT 모드로 성능 최적화
@@ -21,7 +18,7 @@ export default {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
     defaultLineHeights: true,
-    standardFontWeights: true
+    standardFontWeights: true,
   },
   // 실험적 기능으로 성능 향상
   experimental: {
@@ -77,11 +74,11 @@ export default {
         display: ['Cal Sans', 'Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem' }],
-        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
-        'base': ['1rem', { lineHeight: '1.5rem' }],
-        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
-        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        xs: ['0.75rem', { lineHeight: '1rem' }],
+        sm: ['0.875rem', { lineHeight: '1.25rem' }],
+        base: ['1rem', { lineHeight: '1.5rem' }],
+        lg: ['1.125rem', { lineHeight: '1.75rem' }],
+        xl: ['1.25rem', { lineHeight: '1.75rem' }],
         '2xl': ['1.5rem', { lineHeight: '2rem' }],
         '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
         '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
@@ -92,9 +89,9 @@ export default {
         '9xl': ['8rem', { lineHeight: '1' }],
       },
       spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '128': '32rem',
+        18: '4.5rem',
+        88: '22rem',
+        128: '32rem',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -118,22 +115,22 @@ export default {
       },
       // 성능 최적화를 위한 커스텀 유틸리티
       transitionProperty: {
-        'height': 'height',
-        'spacing': 'margin, padding',
+        height: 'height',
+        spacing: 'margin, padding',
       },
     },
     screens: {
-      'xs': '480px',
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
+      xs: '480px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
       '2xl': '1536px',
     },
   },
   plugins: [
     // 성능 최적화를 위한 커스텀 플러그인
-    function({ addUtilities }) {
+    function ({ addUtilities }) {
       const newUtilities = {
         '.will-change-auto': {
           'will-change': 'auto',
@@ -145,9 +142,9 @@ export default {
           'will-change': 'contents',
         },
         '.gpu-accelerate': {
-          'transform': 'translateZ(0)',
+          transform: 'translateZ(0)',
           'backface-visibility': 'hidden',
-          'perspective': '1000px',
+          perspective: '1000px',
         },
         '.smooth-rendering': {
           '-webkit-font-smoothing': 'antialiased',
@@ -164,6 +161,5 @@ export default {
   corePlugins: {
     // 사용하지 않는 핵심 플러그인 비활성화로 번들 크기 줄이기
     // container: false, // 컨테이너를 사용하지 않는다면 비활성화
-  }
+  },
 };
-

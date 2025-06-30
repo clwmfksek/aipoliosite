@@ -1,19 +1,19 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import type { 
-  ProjectEntry, 
-  BlogEntry, 
-  ExperienceEntry, 
+import type {
+  ProjectEntry,
+  BlogEntry,
+  ExperienceEntry,
   SkillEntry,
   ProjectForCard,
   BlogPostForCard,
   SkillForItem,
-  ExperienceForItem
+  ExperienceForItem,
 } from '../types/content';
 import {
   projectEntryToCard,
   blogEntryToCard,
   skillEntryToItem,
-  experienceEntryToItem
+  experienceEntryToItem,
 } from '../types/content';
 
 // 타입 정의 (레거시 호환성)
@@ -27,7 +27,10 @@ export async function getAllProjects(): Promise<Project[]> {
   const projects = await getCollection('projects');
   return projects
     .filter((project: CollectionEntry<'projects'>) => project.data.published)
-    .sort((a: CollectionEntry<'projects'>, b: CollectionEntry<'projects'>) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+    .sort(
+      (a: CollectionEntry<'projects'>, b: CollectionEntry<'projects'>) =>
+        new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+    );
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
@@ -47,7 +50,7 @@ export async function getProjectsByCategory(category: string): Promise<Project[]
 
 export async function getProjectsByTech(tech: string): Promise<Project[]> {
   const projects = await getAllProjects();
-  return projects.filter((project: Project) => 
+  return projects.filter((project: Project) =>
     project.data.tech.some((t: string) => t.toLowerCase().includes(tech.toLowerCase()))
   );
 }
@@ -57,7 +60,10 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
   const posts = await getCollection('blog');
   return posts
     .filter((post: CollectionEntry<'blog'>) => post.data.published && !post.data.draft)
-    .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+    .sort(
+      (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+        new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+    );
 }
 
 export async function getFeaturedBlogPosts(): Promise<BlogPost[]> {
@@ -82,7 +88,7 @@ export async function getBlogPostsByCategory(category: string): Promise<BlogPost
 
 export async function getBlogPostsByTag(tag: string): Promise<BlogPost[]> {
   const posts = await getAllBlogPosts();
-  return posts.filter((post: BlogPost) => 
+  return posts.filter((post: BlogPost) =>
     post.data.tags?.some((t: string) => t.toLowerCase() === tag.toLowerCase())
   );
 }
@@ -153,7 +159,7 @@ export function paginate<T>(items: T[], page: number, itemsPerPage: number = 10)
   const totalPages = Math.ceil(items.length / itemsPerPage);
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  
+
   return {
     items: items.slice(startIndex, endIndex),
     currentPage: page,
@@ -167,12 +173,11 @@ export function paginate<T>(items: T[], page: number, itemsPerPage: number = 10)
 }
 
 // 검색 유틸리티
-export function searchContent<T extends { data: { title: string; description?: string; tags?: string[] } }>(
-  items: T[], 
-  query: string
-): T[] {
+export function searchContent<
+  T extends { data: { title: string; description?: string; tags?: string[] } },
+>(items: T[], query: string): T[] {
   if (!query.trim()) return items;
-  
+
   const searchTerm = query.toLowerCase().trim();
   return items.filter((item: T) => {
     const { title, description = '', tags = [] } = item.data;
@@ -185,59 +190,73 @@ export function searchContent<T extends { data: { title: string; description?: s
 }
 
 // 관련 콘텐츠 유틸리티
-export function getRelatedProjects(currentProject: Project, allProjects: Project[], limit: number = 3): Project[] {
+export function getRelatedProjects(
+  currentProject: Project,
+  allProjects: Project[],
+  limit: number = 3
+): Project[] {
   const related = allProjects
     .filter((project: Project) => project.slug !== currentProject.slug)
     .map((project: Project) => {
       let score = 0;
-      
+
       // 같은 카테고리면 점수 추가
       if (project.data.category === currentProject.data.category) score += 3;
-      
+
       // 공통 기술 스택으로 점수 추가
-      const commonTech = project.data.tech.filter((tech: string) => 
+      const commonTech = project.data.tech.filter((tech: string) =>
         currentProject.data.tech.includes(tech)
       );
       score += commonTech.length;
-      
+
       // 공통 태그로 점수 추가
-      const commonTags = project.data.tags.filter((tag: string) => 
+      const commonTags = project.data.tags.filter((tag: string) =>
         currentProject.data.tags.includes(tag)
       );
       score += commonTags.length * 0.5;
-      
+
       return { project, score };
     })
     .filter((item: { project: Project; score: number }) => item.score > 0)
-    .sort((a: { project: Project; score: number }, b: { project: Project; score: number }) => b.score - a.score)
+    .sort(
+      (a: { project: Project; score: number }, b: { project: Project; score: number }) =>
+        b.score - a.score
+    )
     .slice(0, limit)
     .map((item: { project: Project; score: number }) => item.project);
-    
+
   return related;
 }
 
-export function getRelatedBlogPosts(currentPost: BlogPost, allPosts: BlogPost[], limit: number = 3): BlogPost[] {
+export function getRelatedBlogPosts(
+  currentPost: BlogPost,
+  allPosts: BlogPost[],
+  limit: number = 3
+): BlogPost[] {
   const related = allPosts
     .filter((post: BlogPost) => post.slug !== currentPost.slug)
     .map((post: BlogPost) => {
       let score = 0;
-      
+
       // 같은 카테고리면 점수 추가
       if (post.data.category === currentPost.data.category) score += 2;
-      
+
       // 공통 태그로 점수 추가
-      const commonTags = (post.data.tags || []).filter((tag: string) => 
+      const commonTags = (post.data.tags || []).filter((tag: string) =>
         (currentPost.data.tags || []).includes(tag)
       );
       score += commonTags.length;
-      
+
       return { post, score };
     })
     .filter((item: { post: BlogPost; score: number }) => item.score > 0)
-    .sort((a: { post: BlogPost; score: number }, b: { post: BlogPost; score: number }) => b.score - a.score)
+    .sort(
+      (a: { post: BlogPost; score: number }, b: { post: BlogPost; score: number }) =>
+        b.score - a.score
+    )
     .slice(0, limit)
     .map((item: { post: BlogPost; score: number }) => item.post);
-    
+
   return related;
 }
 
@@ -293,4 +312,4 @@ export async function getExperienceForItems(): Promise<ExperienceForItem[]> {
 export async function getFeaturedExperienceForItems(): Promise<ExperienceForItem[]> {
   const experiences = await getExperienceForItems();
   return experiences.slice(0, 3); // 최근 3개 경력만
-} 
+}

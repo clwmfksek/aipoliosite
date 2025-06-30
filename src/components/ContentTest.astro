@@ -1,5 +1,12 @@
 ---
-import { getAllProjects, getAllBlogPosts, getAllSkills, type Project, type BlogPost, type Skill } from '../lib/content';
+import {
+  getAllProjects,
+  getAllBlogPosts,
+  getAllSkills,
+  type Project,
+  type BlogPost,
+  type Skill,
+} from '../lib/content';
 
 // 타입 안전성 테스트
 const projects: Project[] = await getAllProjects();
@@ -16,7 +23,7 @@ if (projects.length > 0) {
   console.log('Sample project data:', {
     title: projects[0].data.title,
     tech: projects[0].data.tech,
-    date: projects[0].data.date
+    date: projects[0].data.date,
   });
 }
 
@@ -24,7 +31,7 @@ if (blogPosts.length > 0) {
   console.log('Sample blog post data:', {
     title: blogPosts[0].data.title,
     category: blogPosts[0].data.category,
-    tags: blogPosts[0].data.tags
+    tags: blogPosts[0].data.tags,
   });
 }
 ---
@@ -33,41 +40,53 @@ if (blogPosts.length > 0) {
   <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
     콘텐츠 컬렉션 타입스크립트 통합 테스트
   </h2>
-  
+
   <div class="grid gap-4 md:grid-cols-3">
     <div class="bg-white dark:bg-gray-700 p-4 rounded shadow">
       <h3 class="font-semibold text-lg mb-2 text-blue-600 dark:text-blue-400">프로젝트</h3>
       <p class="text-gray-700 dark:text-gray-300">총 {projects.length}개</p>
-      {projects.length > 0 && (
-        <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          <p>최신: {projects[0].data.title}</p>
-          <p>기술: {projects[0].data.tech.slice(0, 3).join(', ')}</p>
-        </div>
-      )}
+      {
+        projects.length > 0 && (
+          <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p>최신: {projects[0].data.title}</p>
+            <p>기술: {projects[0].data.tech.slice(0, 3).join(', ')}</p>
+          </div>
+        )
+      }
     </div>
-    
+
     <div class="bg-white dark:bg-gray-700 p-4 rounded shadow">
       <h3 class="font-semibold text-lg mb-2 text-green-600 dark:text-green-400">블로그</h3>
       <p class="text-gray-700 dark:text-gray-300">총 {blogPosts.length}개</p>
-      {blogPosts.length > 0 && (
-        <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          <p>최신: {blogPosts[0].data.title}</p>
-          <p>카테고리: {blogPosts[0].data.category}</p>
-        </div>
-      )}
+      {
+        blogPosts.length > 0 && (
+          <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p>최신: {blogPosts[0].data.title}</p>
+            <p>카테고리: {blogPosts[0].data.category}</p>
+          </div>
+        )
+      }
     </div>
-    
+
     <div class="bg-white dark:bg-gray-700 p-4 rounded shadow">
       <h3 class="font-semibold text-lg mb-2 text-purple-600 dark:text-purple-400">스킬</h3>
       <p class="text-gray-700 dark:text-gray-300">총 {skills.length}개</p>
-      {skills.length > 0 && (
-        <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          <p>예시: {skills.slice(0, 3).map(s => s.data.name).join(', ')}</p>
-        </div>
-      )}
+      {
+        skills.length > 0 && (
+          <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p>
+              예시:{' '}
+              {skills
+                .slice(0, 3)
+                .map(s => s.data.name)
+                .join(', ')}
+            </p>
+          </div>
+        )
+      }
     </div>
   </div>
-  
+
   <div class="mt-6">
     <h4 class="font-semibold mb-2 text-gray-900 dark:text-white">타입 검증 상태</h4>
     <div class="grid gap-2 text-sm">
@@ -99,8 +118,8 @@ if (blogPosts.length > 0) {
     border: 2px dashed #e5e7eb;
     border-radius: 0.5rem;
   }
-  
+
   .dark .content-test {
     border-color: #4b5563;
   }
-</style> 
+</style>

@@ -4,25 +4,20 @@ import type { ThemeToggleProps } from '../../types/components';
 
 interface Props extends ThemeToggleProps {}
 
-const { 
-  size = 'md', 
-  showLabel = false, 
-  class: className = '',
-  ...rest 
-} = Astro.props;
+const { size = 'md', showLabel = false, class: className = '', ...rest } = Astro.props;
 
 // 크기별 스타일
 const sizeStyles = {
   sm: 'w-8 h-8 p-1',
   md: 'w-10 h-10 p-2',
-  lg: 'w-12 h-12 p-3'
+  lg: 'w-12 h-12 p-3',
 };
 
 // 아이콘 크기
 const iconSizes = {
   sm: 'w-4 h-4',
   md: 'w-6 h-6',
-  lg: 'w-8 h-8'
+  lg: 'w-8 h-8',
 };
 
 const classes = [
@@ -33,8 +28,10 @@ const classes = [
   'transition-all duration-200',
   'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-800',
   sizeStyles[size],
-  className
-].filter(Boolean).join(' ');
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
 <div class={showLabel ? 'flex items-center gap-2' : ''}>
@@ -85,13 +82,7 @@ const classes = [
       stroke="currentColor"
       viewBox="0 0 24 24"
     >
-      <circle
-        class="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        stroke-width="4"
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
       ></circle>
       <path
         class="opacity-75"
@@ -100,13 +91,15 @@ const classes = [
       ></path>
     </svg>
   </button>
-  
-  {showLabel && (
-    <span class="text-sm font-medium text-secondary-700 dark:text-secondary-300">
-      <span class="dark:hidden">라이트</span>
-      <span class="hidden dark:inline">다크</span>
-    </span>
-  )}
+
+  {
+    showLabel && (
+      <span class="text-sm font-medium text-secondary-700 dark:text-secondary-300">
+        <span class="dark:hidden">라이트</span>
+        <span class="hidden dark:inline">다크</span>
+      </span>
+    )
+  }
 </div>
 
 <script>
@@ -131,11 +124,11 @@ const classes = [
       try {
         // 테마 전환
         const newTheme = (window as any).themeManager?.toggleTheme();
-        
+
         // 짧은 지연 후 로딩 상태 해제 (시각적 피드백)
         setTimeout(() => {
           hideLoadingState(themeToggle);
-          
+
           // 성공 피드백
           if (newTheme) {
             showSuccessFeedback(themeToggle, newTheme);
@@ -147,14 +140,13 @@ const classes = [
           (window as any).gtag('event', 'theme_toggle', {
             event_category: 'UI',
             event_label: newTheme,
-            value: 1
+            value: 1,
           });
         }
-
       } catch (error) {
         console.error('테마 전환 중 오류 발생:', error);
         hideLoadingState(themeToggle);
-        
+
         // 오류 피드백
         showErrorFeedback(themeToggle);
       }
@@ -177,7 +169,7 @@ const classes = [
     const sunIcon = button.querySelector('.sun-icon') as SVGElement;
     const moonIcon = button.querySelector('.moon-icon') as SVGElement;
     const loadingIcon = button.querySelector('.loading-icon') as SVGElement;
-    
+
     if (sunIcon) {
       sunIcon.style.transform = 'scale(0)';
       sunIcon.style.opacity = '0';
@@ -190,7 +182,7 @@ const classes = [
       loadingIcon.style.transform = 'scale(1)';
       loadingIcon.style.opacity = '1';
     }
-    
+
     button.disabled = true;
   }
 
@@ -201,7 +193,7 @@ const classes = [
       loadingIcon.style.transform = 'scale(0)';
       loadingIcon.style.opacity = '0';
     }
-    
+
     button.disabled = false;
   }
 
@@ -209,7 +201,7 @@ const classes = [
   function updateToggleIcon(button: HTMLButtonElement, theme: string) {
     const sunIcon = button.querySelector('.sun-icon') as SVGElement;
     const moonIcon = button.querySelector('.moon-icon') as SVGElement;
-    
+
     if (theme === 'dark') {
       if (sunIcon) {
         sunIcon.style.transform = 'scale(0)';
@@ -268,7 +260,7 @@ const classes = [
     /* GPU 가속으로 성능 최적화 */
     transform: translateZ(0);
     backface-visibility: hidden;
-    
+
     /* 부드러운 호버 효과 */
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -305,7 +297,7 @@ const classes = [
       transform: translateZ(0);
       box-shadow: none;
     }
-    
+
     .theme-toggle:active {
       transform: scale(0.95) translateZ(0);
     }
@@ -326,9 +318,9 @@ const classes = [
     .loading-icon {
       transition: none;
     }
-    
+
     .loading-icon {
       animation: none;
     }
   }
-</style> 
+</style>

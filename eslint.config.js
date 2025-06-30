@@ -28,16 +28,19 @@ export default [
     },
     rules: {
       // TypeScript rules (완화)
-      '@typescript-eslint/no-unused-vars': ['warn', { 
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        ignoreRestSiblings: true,
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-var-requires': 'error',
-      
+
       // General JavaScript rules (완화)
       'no-console': ['warn', { allow: ['warn', 'error', 'log'] }],
       'no-debugger': 'warn', // 개발 중이므로 warning으로
@@ -46,11 +49,11 @@ export default [
       'prefer-const': 'warn',
       'no-var': 'error',
       'no-undef': 'warn', // 개발 중이므로 warning으로
-      
+
       // Performance rules
       'no-await-in-loop': 'warn',
       'require-atomic-updates': 'warn',
-      
+
       // 접근성 규칙 (중요한 것만 error, 나머지는 warn)
       'jsx-a11y/alt-text': 'warn',
       'jsx-a11y/anchor-has-content': 'warn',
@@ -66,12 +69,12 @@ export default [
       'jsx-a11y/no-redundant-roles': 'warn',
       'jsx-a11y/role-has-required-aria-props': 'error',
       'jsx-a11y/role-supports-aria-props': 'error',
-      
+
       // Code style (완화)
       'object-shorthand': 'warn',
       'prefer-template': 'warn',
-      'quotes': ['warn', 'single', { avoidEscape: true }],
-      'semi': ['warn', 'always'],
+      quotes: ['warn', 'single', { avoidEscape: true }],
+      semi: ['warn', 'always'],
     },
   },
   {
@@ -101,7 +104,7 @@ export default [
       'astro/no-deprecated-astro-canonicalurl': 'warn',
       'astro/no-deprecated-astro-resolve': 'warn',
       'astro/no-unused-css-selector': 'off', // 개발 중이므로 비활성화
-      
+
       // 일반 규칙들도 완화
       'no-unused-vars': 'warn',
       'no-undef': 'warn',
@@ -123,18 +126,11 @@ export default [
   {
     files: ['**/*.js', '**/*.mjs'],
     rules: {
-      'semi': ['warn', 'always'],
+      semi: ['warn', 'always'],
       'no-unused-vars': 'warn',
     },
   },
   {
-    ignores: [
-      'dist/',
-      'node_modules/',
-      '.astro/',
-      'public/',
-      '*.config.js',
-      '*.config.mjs',
-    ],
+    ignores: ['dist/', 'node_modules/', '.astro/', 'public/', '*.config.js', '*.config.mjs'],
   },
-]; 
+];

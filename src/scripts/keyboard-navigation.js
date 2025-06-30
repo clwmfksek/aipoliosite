@@ -5,20 +5,20 @@ class KeyboardNavigationEnhancer {
     this.sections = [];
     this.currentFocusableIndex = 0;
     this.focusableElements = [];
-    
+
     this.init();
   }
 
   init() {
     // 주요 섹션들 식별
     this.identifySections();
-    
+
     // 이벤트 리스너 설정
     this.setupKeyboardShortcuts();
-    
+
     // 포커스 표시 개선
     this.enhanceFocusIndicators();
-    
+
     console.log('키보드 내비게이션 향상 기능 초기화 완료');
   }
 
@@ -31,7 +31,7 @@ class KeyboardNavigationEnhancer {
       'section[aria-label*="기술"]',
       'section[aria-label*="프로젝트"]',
       'section[aria-label*="연락"]',
-      'footer[role="contentinfo"]'
+      'footer[role="contentinfo"]',
     ];
 
     this.sections = sectionSelectors
@@ -43,7 +43,7 @@ class KeyboardNavigationEnhancer {
 
   // 키보드 단축키 설정
   setupKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       // Alt 키와 조합된 단축키들
       if (e.altKey) {
         switch (e.key) {
@@ -130,15 +130,15 @@ class KeyboardNavigationEnhancer {
     if (index >= 0 && index < this.sections.length) {
       this.currentSectionIndex = index;
       const section = this.sections[index];
-      
+
       // 섹션에 포커스 설정
       section.setAttribute('tabindex', '-1');
       section.focus();
-      
+
       // 스무스 스크롤
-      section.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+      section.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
       });
 
       // 섹션 내 첫 번째 포커스 가능한 요소 찾기
@@ -155,18 +155,17 @@ class KeyboardNavigationEnhancer {
   navigateToNextSection() {
     const nextIndex = (this.currentSectionIndex + 1) % this.sections.length;
     this.navigateToSection(nextIndex);
-    
+
     const sectionName = this.getSectionName(nextIndex);
     window.accessibility?.announce(`다음 섹션으로 이동: ${sectionName}`);
   }
 
   // 이전 섹션으로 이동
   navigateToPreviousSection() {
-    const prevIndex = this.currentSectionIndex === 0 
-      ? this.sections.length - 1 
-      : this.currentSectionIndex - 1;
+    const prevIndex =
+      this.currentSectionIndex === 0 ? this.sections.length - 1 : this.currentSectionIndex - 1;
     this.navigateToSection(prevIndex);
-    
+
     const sectionName = this.getSectionName(prevIndex);
     window.accessibility?.announce(`이전 섹션으로 이동: ${sectionName}`);
   }
@@ -179,7 +178,7 @@ class KeyboardNavigationEnhancer {
       'input:not([disabled])',
       'textarea:not([disabled])',
       'select:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])'
+      '[tabindex]:not([tabindex="-1"])',
     ];
 
     const focusableElements = section.querySelectorAll(focusableSelectors.join(', '));
@@ -195,7 +194,7 @@ class KeyboardNavigationEnhancer {
       '기술 스택',
       '프로젝트',
       '연락처',
-      '푸터'
+      '푸터',
     ];
     return sectionNames[index] || `섹션 ${index + 1}`;
   }
@@ -210,7 +209,7 @@ class KeyboardNavigationEnhancer {
       document.body.classList.add('using-mouse');
     });
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       if (e.key === 'Tab') {
         usingMouse = false;
         document.body.classList.remove('using-mouse');
@@ -218,20 +217,20 @@ class KeyboardNavigationEnhancer {
     });
 
     // 포커스 추적 및 스크롤
-    document.addEventListener('focusin', (e) => {
+    document.addEventListener('focusin', e => {
       const focusedElement = e.target;
-      
+
       // 포커스된 요소가 화면에 보이도록 스크롤
       if (focusedElement && typeof focusedElement.scrollIntoView === 'function') {
         // 헤더 높이를 고려한 오프셋
         const headerHeight = document.querySelector('header')?.offsetHeight || 80;
-        
+
         setTimeout(() => {
           focusedElement.scrollIntoView({
             behavior: 'smooth',
-            block: 'center'
+            block: 'center',
           });
-          
+
           // 헤더와 겹치지 않도록 추가 스크롤
           window.scrollBy(0, -headerHeight / 2);
         }, 100);
@@ -243,7 +242,7 @@ class KeyboardNavigationEnhancer {
   showKeyboardHelp() {
     const helpModal = this.createHelpModal();
     document.body.appendChild(helpModal);
-    
+
     // 모달에 포커스
     const closeButton = helpModal.querySelector('.help-close-button');
     if (closeButton) {
@@ -256,7 +255,8 @@ class KeyboardNavigationEnhancer {
   // 도움말 모달 생성
   createHelpModal() {
     const modal = document.createElement('div');
-    modal.className = 'keyboard-help-modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
+    modal.className =
+      'keyboard-help-modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-labelledby', 'help-title');
     modal.setAttribute('aria-describedby', 'help-content');
@@ -309,16 +309,16 @@ class KeyboardNavigationEnhancer {
 
     modal.querySelector('.help-close-button').addEventListener('click', closeModal);
     modal.querySelector('.help-ok-button').addEventListener('click', closeModal);
-    
+
     // 모달 외부 클릭으로 닫기
-    modal.addEventListener('click', (e) => {
+    modal.addEventListener('click', e => {
       if (e.target === modal) {
         closeModal();
       }
     });
 
     // ESC 키로 닫기
-    const handleEsc = (e) => {
+    const handleEsc = e => {
       if (e.key === 'Escape') {
         closeModal();
         document.removeEventListener('keydown', handleEsc);
@@ -347,4 +347,4 @@ if (document.readyState === 'loading') {
 }
 
 // 전역 접근 허용
-window.keyboardNavigationEnhancer = keyboardNavigationEnhancer; 
+window.keyboardNavigationEnhancer = keyboardNavigationEnhancer;

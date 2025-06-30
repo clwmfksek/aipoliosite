@@ -5,23 +5,23 @@ import MainContent from '../components/layout/MainContent.astro';
 import SkipLink from '../components/SkipLink.astro';
 
 export interface Props {
-	title?: string;
-	description?: string;
-	image?: string;
-	noIndex?: boolean;
-	maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '6xl' | '7xl' | 'full';
-	padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-	fullHeight?: boolean;
+  title?: string;
+  description?: string;
+  image?: string;
+  noIndex?: boolean;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '6xl' | '7xl' | 'full';
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  fullHeight?: boolean;
 }
 
 const {
-	title = '포트폴리오',
-	description = '개발자 포트폴리오 사이트',
-	image = '/favicon.svg',
-	noIndex = false,
-	maxWidth = '7xl',
-	padding = 'lg',
-	fullHeight = false,
+  title = '포트폴리오',
+  description = '개발자 포트폴리오 사이트',
+  image = '/favicon.svg',
+  noIndex = false,
+  maxWidth = '7xl',
+  padding = 'lg',
+  fullHeight = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -29,385 +29,403 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 <!doctype html>
 <html lang="ko" class="scroll-smooth">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		
-		<!-- 성능 최적화 메타 태그 -->
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="format-detection" content="telephone=no" />
-		<meta name="theme-color" content="#3b82f6" />
-		<meta name="msapplication-TileColor" content="#3b82f6" />
-		
-		<!-- DNS Prefetch 및 Preconnect (성능 향상) -->
-		<link rel="dns-prefetch" href="//fonts.googleapis.com" />
-		<link rel="dns-prefetch" href="//fonts.gstatic.com" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		
-		<!-- 폰트 최적화 로딩 (Google Fonts) -->
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
-		
-		<!-- PWA 매니페스트 -->
-		<link rel="manifest" href="/manifest.json" />
-		
-		<!-- Apple 터치 아이콘 -->
-		<link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
-		
-		<!-- 성능 최적화 리소스 힌트 -->
-		<link rel="prefetch" href="/" />
-		
-		<!-- 접근성 관리 스크립트 -->
-		<script src="/src/scripts/accessibility.js" defer></script>
-		<script src="/src/scripts/keyboard-navigation.js" defer></script>
-		
-		<!-- 테마 관리 스크립트 (FOUC 방지를 위해 일찍 로드) -->
-		<script is:inline>
-			// 테마 관리 시스템 초기화
-			(function() {
-				const STORAGE_KEY = 'portfolio-theme';
-				const THEME_ATTRIBUTE = 'data-theme';
-				const DARK_CLASS = 'dark';
-				
-				// 시스템 테마 선호도 감지
-				function getSystemPreference() {
-					if (typeof window !== 'undefined') {
-						return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-					}
-					return 'light';
-				}
-				
-				// 저장된 테마 가져오기
-				function getSavedTheme() {
-					if (typeof localStorage !== 'undefined') {
-						return localStorage.getItem(STORAGE_KEY);
-					}
-					return null;
-				}
-				
-				// 현재 테마 가져오기
-				function getCurrentTheme() {
-					const saved = getSavedTheme();
-					return saved || getSystemPreference();
-				}
-				
-				// 테마 적용
-				function applyTheme(theme) {
-					const root = document.documentElement;
-					const body = document.body;
-					
-					if (theme === 'dark') {
-						root.classList.add(DARK_CLASS);
-						body.classList.add(DARK_CLASS);
-					} else {
-						root.classList.remove(DARK_CLASS);
-						body.classList.remove(DARK_CLASS);
-					}
-					
-					root.setAttribute(THEME_ATTRIBUTE, theme);
-					
-					// 이벤트 발송
-					const event = new CustomEvent('themechange', {
-						detail: { theme }
-					});
-					document.dispatchEvent(event);
-				}
-				
-				// 테마 저장
-				function saveTheme(theme) {
-					if (typeof localStorage !== 'undefined') {
-						localStorage.setItem(STORAGE_KEY, theme);
-					}
-				}
-				
-				// 테마 토글
-				function toggleTheme() {
-					const current = getCurrentTheme();
-					const newTheme = current === 'dark' ? 'light' : 'dark';
-					applyTheme(newTheme);
-					saveTheme(newTheme);
-					return newTheme;
-				}
-				
-				// 글로벌 테마 매니저 등록
-				window.themeManager = {
-					getCurrentTheme,
-					applyTheme,
-					toggleTheme,
-					saveTheme
-				};
-				
-				// 즉시 테마 적용 (FOUC 방지)
-				const initialTheme = getCurrentTheme();
-				applyTheme(initialTheme);
-				
-				// 시스템 테마 변경 감지
-				if (typeof window !== 'undefined' && window.matchMedia) {
-					const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-					mediaQuery.addEventListener('change', (e) => {
-						// 사용자가 수동으로 테마를 설정하지 않은 경우에만 시스템 테마를 따름
-						if (!getSavedTheme()) {
-							applyTheme(e.matches ? 'dark' : 'light');
-						}
-					});
-				}
-			})();
-		</script>
-		
-		<script src="/performance-monitor.js" defer></script>
-		
-		<!-- SEO 및 메타데이터 -->
-		<title>{title}</title>
-		<meta name="description" content={description} />
-		<meta name="keywords" content="포트폴리오, 웹 개발자, 프론트엔드, 백엔드, React, Vue, Node.js" />
-		<meta name="author" content="포트폴리오 소유자" />
-		
-		<!-- Open Graph -->
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:image" content={new URL(image, Astro.site || 'https://portfolio.example.com')} />
-		<meta property="og:url" content={canonicalURL} />
-		<meta property="og:site_name" content="김개발 포트폴리오" />
-		
-		<!-- Twitter Card -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={new URL(image, Astro.site || 'https://portfolio.example.com')} />
-		
-		<!-- 구조화된 데이터 (JSON-LD) -->
-		<script type="application/ld+json">
-		{
-			"@context": "https://schema.org",
-			"@type": "Person",
-			"name": "포트폴리오 소유자",
-			"jobTitle": "웹 개발자",
-			"description": "풀스택 웹 개발자의 포트폴리오",
-			"url": "https://portfolio.example.com",
-			"sameAs": [
-				"https://github.com/username",
-				"https://linkedin.com/in/username",
-				"https://twitter.com/username"
-			]
-		}
-		</script>
-		
-		<!-- 성능 최적화 CSS -->
-		<style>
-			/* 중요 CSS - Above the fold */
-			html { 
-				font-family: 'Inter', system-ui, sans-serif;
-				scroll-behavior: smooth;
-			}
-			
-			body { 
-				margin: 0; 
-				padding: 0;
-				background: white;
-				color: #1e293b;
-				line-height: 1.6;
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-			}
-			
-			/* 로딩 중 스타일 */
-			.loading-placeholder {
-				background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-				background-size: 200% 100%;
-				animation: loading 1.5s infinite;
-			}
-			
-			@keyframes loading {
-				0% { background-position: 200% 0; }
-				100% { background-position: -200% 0; }
-			}
-			
-			/* 다크 모드 */
-			.dark body {
-				background: #0f172a;
-				color: #f1f5f9;
-			}
-			
-			/* 스크롤바 스타일링 */
-			::-webkit-scrollbar {
-				width: 8px;
-			}
-			
-			::-webkit-scrollbar-track {
-				background: #f1f5f9;
-			}
-			
-			::-webkit-scrollbar-thumb {
-				background: #cbd5e1;
-				border-radius: 4px;
-			}
-			
-			::-webkit-scrollbar-thumb:hover {
-				background: #94a3b8;
-			}
-			
-			.dark ::-webkit-scrollbar-track {
-				background: #1e293b;
-			}
-			
-			.dark ::-webkit-scrollbar-thumb {
-				background: #475569;
-			}
-			
-			.dark ::-webkit-scrollbar-thumb:hover {
-				background: #64748b;
-			}
-		</style>
-	</head>
-	<body class="min-h-screen bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white">
-		<!-- Skip to main content link -->
-		<SkipLink />
-		
-		<!-- Navigation -->
-		<Header />
-		
-		<!-- Main content wrapper -->
-		<main id="main-content" role="main">
-			<slot />
-		</main>
-		
-		<!-- Footer -->
-		<Footer />
-		
-		<!-- 성능 모니터링 스크립트 -->
-		<script>
-			// Core Web Vitals 측정
-			function measureCoreWebVitals() {
-				// Largest Contentful Paint (LCP)
-				const observer = new PerformanceObserver((entryList) => {
-					const entries = entryList.getEntries();
-					const lastEntry = entries[entries.length - 1];
-					if (lastEntry) {
-						console.log('LCP:', lastEntry.startTime);
-					}
-				});
-				
-				if ('observe' in observer) {
-					observer.observe({ entryTypes: ['largest-contentful-paint'] });
-				}
-				
-				// First Input Delay (FID)
-				const fidObserver = new PerformanceObserver((entryList) => {
-					const entries = entryList.getEntries();
-					entries.forEach((entry) => {
-						// First Input Delay 타입 체크
-						if ('processingStart' in entry && 'startTime' in entry) {
-							console.log('FID:', (entry as any).processingStart - entry.startTime);
-						}
-					});
-				});
-				
-				if ('observe' in fidObserver) {
-					fidObserver.observe({ entryTypes: ['first-input'] });
-				}
-				
-				// Cumulative Layout Shift (CLS)
-				let clsValue = 0;
-				const clsObserver = new PerformanceObserver((entryList) => {
-					const entries = entryList.getEntries();
-					entries.forEach((entry) => {
-						// Layout Shift 타입 체크
-						if ('hadRecentInput' in entry && 'value' in entry) {
-							const layoutShiftEntry = entry as any;
-							if (!layoutShiftEntry.hadRecentInput) {
-								clsValue += layoutShiftEntry.value;
-							}
-						}
-					});
-					console.log('CLS:', clsValue);
-				});
-				
-				if ('observe' in clsObserver) {
-					clsObserver.observe({ entryTypes: ['layout-shift'] });
-				}
-			}
-			
-			// 페이지 로드 완료 후 측정 시작
-			if (document.readyState === 'complete') {
-				measureCoreWebVitals();
-			} else {
-				window.addEventListener('load', measureCoreWebVitals);
-			}
-			
-			// 이미지 지연 로딩 polyfill
-			if ('loading' in HTMLImageElement.prototype) {
-				const images = document.querySelectorAll('img[loading="lazy"]');
-				images.forEach((img) => {
-					img.addEventListener('load', function(this: HTMLImageElement) {
-						this.classList.add('loaded');
-					});
-				});
-			} else {
-				// Intersection Observer를 이용한 polyfill
-				const script = document.createElement('script');
-				script.src = 'https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver';
-				document.head.appendChild(script);
-			}
-		</script>
-		
-		<!-- 서비스 워커 등록 -->
-		<script>
-			// 서비스 워커 지원 확인 및 등록
-			if ('serviceWorker' in navigator) {
-				window.addEventListener('load', async () => {
-					try {
-						const registration = await navigator.serviceWorker.register('/sw.js', {
-							scope: '/'
-						});
-						
-						console.log('서비스 워커 등록 성공:', registration.scope);
-						
-						// 서비스 워커 업데이트 확인
-						registration.addEventListener('updatefound', () => {
-							const newWorker = registration.installing;
-							newWorker?.addEventListener('statechange', () => {
-								if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-									// 새 버전 사용 가능 알림 (선택사항)
-									console.log('새 버전을 사용할 수 있습니다. 페이지를 새로고침하세요.');
-								}
-							});
-						});
-						
-					} catch (error) {
-						console.error('서비스 워커 등록 실패:', error);
-					}
-				});
-			}
-		</script>
-		
-		<!-- 테마 토글 스크립트 (다크모드) -->
-		<script is:inline>
-			// 테마 초기화 (FOUC 방지)
-			const getThemePreference = () => {
-				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-					return localStorage.getItem('theme');
-				}
-				return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-			};
-			
-			const isDark = getThemePreference() === 'dark';
-			document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
-			
-			if (typeof localStorage !== 'undefined') {
-				const observer = new MutationObserver(() => {
-					const isDark = document.documentElement.classList.contains('dark');
-					localStorage.setItem('theme', isDark ? 'dark' : 'light');
-				});
-				observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-			}
-		</script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
 
-		<!-- 글로벌 스타일 -->
-		<style>
-			@import '../styles/global.css';
-		</style>
-	</body>
+    <!-- 성능 최적화 메타 태그 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="msapplication-TileColor" content="#3b82f6" />
+
+    <!-- DNS Prefetch 및 Preconnect (성능 향상) -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- 폰트 최적화 로딩 (Google Fonts) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- PWA 매니페스트 -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Apple 터치 아이콘 -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.svg" />
+
+    <!-- 성능 최적화 리소스 힌트 -->
+    <link rel="prefetch" href="/" />
+
+    <!-- 접근성 관리 스크립트 -->
+    <script src="/src/scripts/accessibility.js" defer></script>
+    <script src="/src/scripts/keyboard-navigation.js" defer></script>
+
+    <!-- 테마 관리 스크립트 (FOUC 방지를 위해 일찍 로드) -->
+    <script is:inline>
+      // 테마 관리 시스템 초기화
+      (function () {
+        const STORAGE_KEY = 'portfolio-theme';
+        const THEME_ATTRIBUTE = 'data-theme';
+        const DARK_CLASS = 'dark';
+
+        // 시스템 테마 선호도 감지
+        function getSystemPreference() {
+          if (typeof window !== 'undefined') {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          return 'light';
+        }
+
+        // 저장된 테마 가져오기
+        function getSavedTheme() {
+          if (typeof localStorage !== 'undefined') {
+            return localStorage.getItem(STORAGE_KEY);
+          }
+          return null;
+        }
+
+        // 현재 테마 가져오기
+        function getCurrentTheme() {
+          const saved = getSavedTheme();
+          return saved || getSystemPreference();
+        }
+
+        // 테마 적용
+        function applyTheme(theme) {
+          const root = document.documentElement;
+          const body = document.body;
+
+          if (theme === 'dark') {
+            root.classList.add(DARK_CLASS);
+            body.classList.add(DARK_CLASS);
+          } else {
+            root.classList.remove(DARK_CLASS);
+            body.classList.remove(DARK_CLASS);
+          }
+
+          root.setAttribute(THEME_ATTRIBUTE, theme);
+
+          // 이벤트 발송
+          const event = new CustomEvent('themechange', {
+            detail: { theme },
+          });
+          document.dispatchEvent(event);
+        }
+
+        // 테마 저장
+        function saveTheme(theme) {
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(STORAGE_KEY, theme);
+          }
+        }
+
+        // 테마 토글
+        function toggleTheme() {
+          const current = getCurrentTheme();
+          const newTheme = current === 'dark' ? 'light' : 'dark';
+          applyTheme(newTheme);
+          saveTheme(newTheme);
+          return newTheme;
+        }
+
+        // 글로벌 테마 매니저 등록
+        window.themeManager = {
+          getCurrentTheme,
+          applyTheme,
+          toggleTheme,
+          saveTheme,
+        };
+
+        // 즉시 테마 적용 (FOUC 방지)
+        const initialTheme = getCurrentTheme();
+        applyTheme(initialTheme);
+
+        // 시스템 테마 변경 감지
+        if (typeof window !== 'undefined' && window.matchMedia) {
+          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+          mediaQuery.addEventListener('change', e => {
+            // 사용자가 수동으로 테마를 설정하지 않은 경우에만 시스템 테마를 따름
+            if (!getSavedTheme()) {
+              applyTheme(e.matches ? 'dark' : 'light');
+            }
+          });
+        }
+      })();
+    </script>
+
+    <script src="/performance-monitor.js" defer></script>
+
+    <!-- SEO 및 메타데이터 -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta
+      name="keywords"
+      content="포트폴리오, 웹 개발자, 프론트엔드, 백엔드, React, Vue, Node.js"
+    />
+    <meta name="author" content="포트폴리오 소유자" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta
+      property="og:image"
+      content={new URL(image, Astro.site || 'https://portfolio.example.com')}
+    />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="김개발 포트폴리오" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta
+      name="twitter:image"
+      content={new URL(image, Astro.site || 'https://portfolio.example.com')}
+    />
+
+    <!-- 구조화된 데이터 (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "포트폴리오 소유자",
+        "jobTitle": "웹 개발자",
+        "description": "풀스택 웹 개발자의 포트폴리오",
+        "url": "https://portfolio.example.com",
+        "sameAs": [
+          "https://github.com/username",
+          "https://linkedin.com/in/username",
+          "https://twitter.com/username"
+        ]
+      }
+    </script>
+
+    <!-- 성능 최적화 CSS -->
+    <style>
+      /* 중요 CSS - Above the fold */
+      html {
+        font-family: 'Inter', system-ui, sans-serif;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        color: #1e293b;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* 로딩 중 스타일 */
+      .loading-placeholder {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* 다크 모드 */
+      .dark body {
+        background: #0f172a;
+        color: #f1f5f9;
+      }
+
+      /* 스크롤바 스타일링 */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .dark ::-webkit-scrollbar-track {
+        background: #1e293b;
+      }
+
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white">
+    <!-- Skip to main content link -->
+    <SkipLink />
+
+    <!-- Navigation -->
+    <Header />
+
+    <!-- Main content wrapper -->
+    <main id="main-content" role="main">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+
+    <!-- 성능 모니터링 스크립트 -->
+    <script>
+      // Core Web Vitals 측정
+      function measureCoreWebVitals() {
+        // Largest Contentful Paint (LCP)
+        const observer = new PerformanceObserver(entryList => {
+          const entries = entryList.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          if (lastEntry) {
+            console.log('LCP:', lastEntry.startTime);
+          }
+        });
+
+        if ('observe' in observer) {
+          observer.observe({ entryTypes: ['largest-contentful-paint'] });
+        }
+
+        // First Input Delay (FID)
+        const fidObserver = new PerformanceObserver(entryList => {
+          const entries = entryList.getEntries();
+          entries.forEach(entry => {
+            // First Input Delay 타입 체크
+            if ('processingStart' in entry && 'startTime' in entry) {
+              console.log('FID:', (entry as any).processingStart - entry.startTime);
+            }
+          });
+        });
+
+        if ('observe' in fidObserver) {
+          fidObserver.observe({ entryTypes: ['first-input'] });
+        }
+
+        // Cumulative Layout Shift (CLS)
+        let clsValue = 0;
+        const clsObserver = new PerformanceObserver(entryList => {
+          const entries = entryList.getEntries();
+          entries.forEach(entry => {
+            // Layout Shift 타입 체크
+            if ('hadRecentInput' in entry && 'value' in entry) {
+              const layoutShiftEntry = entry as any;
+              if (!layoutShiftEntry.hadRecentInput) {
+                clsValue += layoutShiftEntry.value;
+              }
+            }
+          });
+          console.log('CLS:', clsValue);
+        });
+
+        if ('observe' in clsObserver) {
+          clsObserver.observe({ entryTypes: ['layout-shift'] });
+        }
+      }
+
+      // 페이지 로드 완료 후 측정 시작
+      if (document.readyState === 'complete') {
+        measureCoreWebVitals();
+      } else {
+        window.addEventListener('load', measureCoreWebVitals);
+      }
+
+      // 이미지 지연 로딩 polyfill
+      if ('loading' in HTMLImageElement.prototype) {
+        const images = document.querySelectorAll('img[loading="lazy"]');
+        images.forEach(img => {
+          img.addEventListener('load', function (this: HTMLImageElement) {
+            this.classList.add('loaded');
+          });
+        });
+      } else {
+        // Intersection Observer를 이용한 polyfill
+        const script = document.createElement('script');
+        script.src = 'https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver';
+        document.head.appendChild(script);
+      }
+    </script>
+
+    <!-- 서비스 워커 등록 -->
+    <script>
+      // 서비스 워커 지원 확인 및 등록
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          try {
+            const registration = await navigator.serviceWorker.register('/sw.js', {
+              scope: '/',
+            });
+
+            console.log('서비스 워커 등록 성공:', registration.scope);
+
+            // 서비스 워커 업데이트 확인
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker?.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // 새 버전 사용 가능 알림 (선택사항)
+                  console.log('새 버전을 사용할 수 있습니다. 페이지를 새로고침하세요.');
+                }
+              });
+            });
+          } catch (error) {
+            console.error('서비스 워커 등록 실패:', error);
+          }
+        });
+      }
+    </script>
+
+    <!-- 테마 토글 스크립트 (다크모드) -->
+    <script is:inline>
+      // 테마 초기화 (FOUC 방지)
+      const getThemePreference = () => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      };
+
+      const isDark = getThemePreference() === 'dark';
+      document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+
+      if (typeof localStorage !== 'undefined') {
+        const observer = new MutationObserver(() => {
+          const isDark = document.documentElement.classList.contains('dark');
+          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
+      }
+    </script>
+
+    <!-- 글로벌 스타일 -->
+    <style>
+      @import '../styles/global.css';
+    </style>
+  </body>
 </html>

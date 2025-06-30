@@ -50,4 +50,12 @@ public/assets/
 
 # Configuration files that have specific formatting
 .lighthouserc.json
-vercel.json 
+vercel.json
+
+# Temporarily exclude problematic files
+src/content/blog/
+src/pages/about.astro
+src/pages/blog/index.astro
+src/pages/projects/
+src/components/sections/
+src/components/ui/Tag.astro

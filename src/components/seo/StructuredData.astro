@@ -6,33 +6,33 @@ interface WebsiteSchema {
   description: string;
   author: PersonSchema;
   potentialAction?: {
-    "@type": string;
+    '@type': string;
     target: string;
-    "query-input": string;
+    'query-input': string;
   };
 }
 
 interface PersonSchema {
-  "@type": string;
+  '@type': string;
   name: string;
   jobTitle: string;
   url: string;
   email?: string;
   telephone?: string;
   address?: {
-    "@type": "PostalAddress";
+    '@type': 'PostalAddress';
     addressLocality: string;
     addressCountry: string;
   };
   knowsAbout?: string[];
   alumniOf?: {
-    "@type": "EducationalOrganization";
+    '@type': 'EducationalOrganization';
     name: string;
   };
   workLocation?: {
-    "@type": "Place";
+    '@type': 'Place';
     address: {
-      "@type": "PostalAddress";
+      '@type': 'PostalAddress';
       addressLocality: string;
       addressCountry: string;
     };
@@ -41,7 +41,7 @@ interface PersonSchema {
 }
 
 interface BlogPostingSchema {
-  "@type": "BlogPosting";
+  '@type': 'BlogPosting';
   headline: string;
   description: string;
   author: PersonSchema;
@@ -51,14 +51,14 @@ interface BlogPostingSchema {
   url: string;
   keywords?: string[];
   mainEntityOfPage: {
-    "@type": "WebPage";
-    "@id": string;
+    '@type': 'WebPage';
+    '@id': string;
   };
   publisher: {
-    "@type": "Organization";
+    '@type': 'Organization';
     name: string;
     logo?: {
-      "@type": "ImageObject";
+      '@type': 'ImageObject';
       url: string;
     };
   };
@@ -67,7 +67,7 @@ interface BlogPostingSchema {
 }
 
 interface ProjectSchema {
-  "@type": "CreativeWork";
+  '@type': 'CreativeWork';
   name: string;
   description: string;
   author: PersonSchema;
@@ -83,7 +83,7 @@ interface ProjectSchema {
 }
 
 interface ContactPointSchema {
-  "@type": "ContactPoint";
+  '@type': 'ContactPoint';
   contactType: string;
   email?: string;
   telephone?: string;
@@ -91,7 +91,7 @@ interface ContactPointSchema {
   availableLanguage?: string[];
   areaServed?: string;
   hoursAvailable?: {
-    "@type": "OpeningHoursSpecification";
+    '@type': 'OpeningHoursSpecification';
     dayOfWeek: string[];
     opens?: string;
     closes?: string;
@@ -106,44 +106,55 @@ interface Props {
 const { type, data } = Astro.props;
 
 // Base schema context
-const baseContext = "https://schema.org";
+const baseContext = 'https://schema.org';
 
 // Common author/person data for the portfolio
 const authorData: PersonSchema = {
-  "@type": "Person",
-  name: "김개발",
-  jobTitle: "풀스택 웹 개발자",
-  url: Astro.site?.toString() || "https://portfolio.example.com",
-  email: "dev.kim@example.com",
-  telephone: "+82-10-0000-0000",
+  '@type': 'Person',
+  name: '김개발',
+  jobTitle: '풀스택 웹 개발자',
+  url: Astro.site?.toString() || 'https://portfolio.example.com',
+  email: 'dev.kim@example.com',
+  telephone: '+82-10-0000-0000',
   address: {
-    "@type": "PostalAddress",
-    addressLocality: "서울",
-    addressCountry: "KR"
+    '@type': 'PostalAddress',
+    addressLocality: '서울',
+    addressCountry: 'KR',
   },
   knowsAbout: [
-    "JavaScript", "TypeScript", "React", "Vue.js", "Node.js", 
-    "Express.js", "PostgreSQL", "MongoDB", "AWS", "Docker",
-    "Frontend Development", "Backend Development", "Full-stack Development",
-    "Web Development", "Software Engineering"
+    'JavaScript',
+    'TypeScript',
+    'React',
+    'Vue.js',
+    'Node.js',
+    'Express.js',
+    'PostgreSQL',
+    'MongoDB',
+    'AWS',
+    'Docker',
+    'Frontend Development',
+    'Backend Development',
+    'Full-stack Development',
+    'Web Development',
+    'Software Engineering',
   ],
   alumniOf: {
-    "@type": "EducationalOrganization",
-    name: "서울대학교"
+    '@type': 'EducationalOrganization',
+    name: '서울대학교',
   },
   workLocation: {
-    "@type": "Place",
+    '@type': 'Place',
     address: {
-      "@type": "PostalAddress",
-      addressLocality: "서울",
-      addressCountry: "KR"
-    }
+      '@type': 'PostalAddress',
+      addressLocality: '서울',
+      addressCountry: 'KR',
+    },
   },
   sameAs: [
-    "https://github.com/yourusername",
-    "https://linkedin.com/in/yourusername",
-    "https://twitter.com/yourusername"
-  ]
+    'https://github.com/yourusername',
+    'https://linkedin.com/in/yourusername',
+    'https://twitter.com/yourusername',
+  ],
 };
 
 // Generate schema based on type
@@ -152,61 +163,61 @@ let schema: any = {};
 switch (type) {
   case 'website':
     schema = {
-      "@context": baseContext,
-      "@type": "WebSite",
-      name: data.name || "김개발 포트폴리오",
-      alternateName: data.alternateName || "김개발",
-      url: Astro.site?.toString() || "https://portfolio.example.com",
-      description: data.description || "풀스택 웹 개발자의 포트폴리오 사이트",
+      '@context': baseContext,
+      '@type': 'WebSite',
+      name: data.name || '김개발 포트폴리오',
+      alternateName: data.alternateName || '김개발',
+      url: Astro.site?.toString() || 'https://portfolio.example.com',
+      description: data.description || '풀스택 웹 개발자의 포트폴리오 사이트',
       author: authorData,
       potentialAction: {
-        "@type": "SearchAction",
-        target: `${Astro.site?.toString() || "https://portfolio.example.com"}/search?q={search_term_string}`,
-        "query-input": "required name=search_term_string"
+        '@type': 'SearchAction',
+        target: `${Astro.site?.toString() || 'https://portfolio.example.com'}/search?q={search_term_string}`,
+        'query-input': 'required name=search_term_string',
       },
       publisher: {
-        "@type": "Person",
-        name: "김개발"
+        '@type': 'Person',
+        name: '김개발',
       },
-      inLanguage: "ko-KR",
+      inLanguage: 'ko-KR',
       copyrightHolder: authorData,
-      copyrightYear: new Date().getFullYear()
+      copyrightYear: new Date().getFullYear(),
     };
     break;
 
   case 'person':
     schema = {
-      "@context": baseContext,
-      "@type": "Person",
+      '@context': baseContext,
+      '@type': 'Person',
       ...authorData,
-      description: data.description || "5년 경력의 풀스택 웹 개발자",
-      image: data.image || "/images/profile.jpg",
+      description: data.description || '5년 경력의 풀스택 웹 개발자',
+      image: data.image || '/images/profile.jpg',
       hasOccupation: {
-        "@type": "Occupation",
-        name: "풀스택 웹 개발자",
+        '@type': 'Occupation',
+        name: '풀스택 웹 개발자',
         occupationLocation: {
-          "@type": "City",
-          name: "서울"
+          '@type': 'City',
+          name: '서울',
         },
         estimatedSalary: {
-          "@type": "MonetaryAmountDistribution",
-          name: "Senior Developer Salary",
-          currency: "KRW"
+          '@type': 'MonetaryAmountDistribution',
+          name: 'Senior Developer Salary',
+          currency: 'KRW',
         },
-        experienceRequirements: "5+ years",
-        skills: "JavaScript, TypeScript, React, Node.js, PostgreSQL"
+        experienceRequirements: '5+ years',
+        skills: 'JavaScript, TypeScript, React, Node.js, PostgreSQL',
       },
       memberOf: {
-        "@type": "Organization",
-        name: "Korean Web Developer Community"
-      }
+        '@type': 'Organization',
+        name: 'Korean Web Developer Community',
+      },
     };
     break;
 
   case 'blogPosting':
     schema = {
-      "@context": baseContext,
-      "@type": "BlogPosting",
+      '@context': baseContext,
+      '@type': 'BlogPosting',
       headline: data.title,
       description: data.description,
       author: authorData,
@@ -216,54 +227,54 @@ switch (type) {
       url: data.url,
       keywords: data.keywords || data.tags,
       mainEntityOfPage: {
-        "@type": "WebPage",
-        "@id": data.url
+        '@type': 'WebPage',
+        '@id': data.url,
       },
       publisher: {
-        "@type": "Organization",
-        name: "김개발 블로그",
+        '@type': 'Organization',
+        name: '김개발 블로그',
         logo: {
-          "@type": "ImageObject",
-          url: `${Astro.site?.toString() || "https://portfolio.example.com"}/favicon.svg`
-        }
+          '@type': 'ImageObject',
+          url: `${Astro.site?.toString() || 'https://portfolio.example.com'}/favicon.svg`,
+        },
       },
-      articleSection: data.category || "Development",
-      articleBody: data.content ? data.content.substring(0, 500) + "..." : undefined,
+      articleSection: data.category || 'Development',
+      articleBody: data.content ? data.content.substring(0, 500) + '...' : undefined,
       wordCount: data.wordCount,
       timeRequired: data.readTime ? `PT${data.readTime}M` : undefined,
-      inLanguage: "ko-KR",
+      inLanguage: 'ko-KR',
       isAccessibleForFree: true,
-      genre: ["Technology", "Programming", "Web Development"]
+      genre: ['Technology', 'Programming', 'Web Development'],
     };
     break;
 
   case 'blog':
     schema = {
-      "@context": baseContext,
-      "@type": "Blog",
-      name: data.name || "김개발 개발 블로그",
-      description: data.description || "웹 개발에 대한 경험과 튜토리얼을 공유하는 블로그",
+      '@context': baseContext,
+      '@type': 'Blog',
+      name: data.name || '김개발 개발 블로그',
+      description: data.description || '웹 개발에 대한 경험과 튜토리얼을 공유하는 블로그',
       url: data.url,
       author: authorData,
       publisher: {
-        "@type": "Organization",
-        name: "김개발 블로그"
+        '@type': 'Organization',
+        name: '김개발 블로그',
       },
-      inLanguage: "ko-KR",
-      about: ["Web Development", "JavaScript", "React", "Node.js", "Programming Tutorials"],
+      inLanguage: 'ko-KR',
+      about: ['Web Development', 'JavaScript', 'React', 'Node.js', 'Programming Tutorials'],
       audience: {
-        "@type": "Audience",
-        audienceType: "Web Developers, Software Engineers, Students"
+        '@type': 'Audience',
+        audienceType: 'Web Developers, Software Engineers, Students',
       },
       copyrightHolder: authorData,
-      copyrightYear: new Date().getFullYear()
+      copyrightYear: new Date().getFullYear(),
     };
     break;
 
   case 'project':
     schema = {
-      "@context": baseContext,
-      "@type": "SoftwareApplication",
+      '@context': baseContext,
+      '@type': 'SoftwareApplication',
       name: data.title,
       description: data.description,
       author: authorData,
@@ -274,67 +285,67 @@ switch (type) {
       keywords: data.technologies,
       programmingLanguage: data.technologies,
       codeRepository: data.githubUrl,
-      license: data.license || "MIT",
+      license: data.license || 'MIT',
       about: data.category,
-      applicationCategory: "WebApplication",
-      operatingSystem: "Web Browser",
+      applicationCategory: 'WebApplication',
+      operatingSystem: 'Web Browser',
       offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD"
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
       },
       screenshot: data.image,
-      softwareVersion: "1.0.0",
-      releaseNotes: data.description
+      softwareVersion: '1.0.0',
+      releaseNotes: data.description,
     };
     break;
 
   case 'contactPoint':
     schema = {
-      "@context": baseContext,
-      "@type": "ContactPoint",
-      contactType: "customer service",
-      email: "dev.kim@example.com",
-      telephone: "+82-10-0000-0000",
+      '@context': baseContext,
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      email: 'dev.kim@example.com',
+      telephone: '+82-10-0000-0000',
       url: data.url,
-      availableLanguage: ["Korean", "English"],
+      availableLanguage: ['Korean', 'English'],
       areaServed: {
-        "@type": "Country",
-        name: "South Korea"
+        '@type': 'Country',
+        name: 'South Korea',
       },
       hoursAvailable: {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "09:00",
-        closes: "18:00"
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '09:00',
+        closes: '18:00',
       },
-      contactOption: "TollFree"
+      contactOption: 'TollFree',
     };
     break;
 
   case 'webPage':
   default:
     schema = {
-      "@context": baseContext,
-      "@type": "WebPage",
+      '@context': baseContext,
+      '@type': 'WebPage',
       name: data.title,
       description: data.description,
       url: data.url,
       author: authorData,
-      inLanguage: "ko-KR",
+      inLanguage: 'ko-KR',
       isPartOf: {
-        "@type": "WebSite",
-        name: "김개발 포트폴리오",
-        url: Astro.site?.toString() || "https://portfolio.example.com"
+        '@type': 'WebSite',
+        name: '김개발 포트폴리오',
+        url: Astro.site?.toString() || 'https://portfolio.example.com',
       },
-      about: data.about || "Web Development Portfolio",
+      about: data.about || 'Web Development Portfolio',
       keywords: data.keywords,
       dateModified: new Date().toISOString(),
       copyrightHolder: authorData,
-      copyrightYear: new Date().getFullYear()
+      copyrightYear: new Date().getFullYear(),
     };
     break;
 }
 ---
 
-<script type="application/ld+json" set:html={JSON.stringify(schema)} /> 
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

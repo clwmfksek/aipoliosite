@@ -16,7 +16,9 @@ import ThemeToggle from '../components/features/ThemeToggle.astro';
 
     <!-- ThemeToggle 컴포넌트 테스트 -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">ThemeToggle 컴포넌트</h2>
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">
+        ThemeToggle 컴포넌트
+      </h2>
       <Card variant="bordered" padding="lg">
         <div class="space-y-4">
           <div class="flex flex-wrap gap-4 items-center">
@@ -26,7 +28,8 @@ import ThemeToggle from '../components/features/ThemeToggle.astro';
             <ThemeToggle size="md" showLabel={true} />
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            테마 토글 버튼을 클릭하여 다크/라이트 모드를 전환해보세요. 설정은 localStorage에 저장됩니다.
+            테마 토글 버튼을 클릭하여 다크/라이트 모드를 전환해보세요. 설정은 localStorage에
+            저장됩니다.
           </p>
         </div>
       </Card>
@@ -75,7 +78,9 @@ import ThemeToggle from '../components/features/ThemeToggle.astro';
         </Card>
         <Card variant="elevated" padding="md" hoverable>
           <h3 class="font-medium mb-2">그림자 카드</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">그림자와 호버 효과가 있는 카드입니다.</p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            그림자와 호버 효과가 있는 카드입니다.
+          </p>
         </Card>
       </div>
     </section>
@@ -180,9 +185,7 @@ import ThemeToggle from '../components/features/ThemeToggle.astro';
       <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">인터랙션 테스트</h2>
       <Card variant="bordered" padding="lg">
         <div class="space-y-4">
-          <p class="text-gray-600 dark:text-gray-400">
-            다음 기능들을 테스트해보세요:
-          </p>
+          <p class="text-gray-600 dark:text-gray-400">다음 기능들을 테스트해보세요:</p>
           <ul class="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400">
             <li>테마 토글 버튼으로 다크/라이트 모드 전환</li>
             <li>제거 가능한 태그의 X 버튼 클릭</li>
@@ -196,7 +199,9 @@ import ThemeToggle from '../components/features/ThemeToggle.astro';
 
     <!-- 기술 스택 시연 -->
     <section class="mb-12">
-      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">기술 스택 표시 예시</h2>
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">
+        기술 스택 표시 예시
+      </h2>
       <Card variant="elevated" padding="lg">
         <h3 class="font-semibold mb-4">포트폴리오 웹사이트</h3>
         <div class="flex flex-wrap gap-2 mb-4">
@@ -231,12 +236,12 @@ import ThemeToggle from '../components/features/ThemeToggle.astro';
 
 <script>
   // Tag removal event listener
-  document.addEventListener('tag-removed', (e) => {
+  document.addEventListener('tag-removed', e => {
     console.log('Tag removed:', e.detail.text);
   });
-  
+
   // Theme change event listener
-  document.addEventListener('theme-changed', (e) => {
+  document.addEventListener('theme-changed', e => {
     console.log('Theme changed:', e.detail.theme);
   });
 </script>
@@ -246,4 +251,4 @@ import ThemeToggle from '../components/features/ThemeToggle.astro';
   .container {
     min-height: 100vh;
   }
-</style> 
+</style>

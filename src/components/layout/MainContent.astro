@@ -6,12 +6,7 @@ export interface Props {
   fullHeight?: boolean;
 }
 
-const {
-  class: className = '',
-  maxWidth = '7xl',
-  padding = 'lg',
-  fullHeight = false,
-} = Astro.props;
+const { class: className = '', maxWidth = '7xl', padding = 'lg', fullHeight = false } = Astro.props;
 
 const maxWidthClasses = {
   sm: 'max-w-sm',
@@ -40,11 +35,11 @@ const containerClasses = [
   paddingClasses[padding],
   fullHeight ? 'min-h-screen' : '',
   className,
-].filter(Boolean).join(' ');
+]
+  .filter(Boolean)
+  .join(' ');
 ---
 
-<div 
-  class={containerClasses}
->
+<div class={containerClasses}>
   <slot />
 </div>

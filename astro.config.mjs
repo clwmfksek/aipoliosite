@@ -22,14 +22,14 @@ export default defineConfig({
         'https://portfolio.example.com/contact/',
         'https://portfolio.example.com/blog/',
       ],
-      filter: (page) => {
+      filter: page => {
         // components-test 페이지는 사이트맵에서 제외
         return !page.includes('/components-test');
       },
-      serialize: (item) => {
+      serialize: item => {
         // 페이지별 우선순위 설정
         let priority = 0.5;
-        
+
         if (item.url === 'https://portfolio.example.com/') {
           priority = 1.0;
         } else if (item.url.includes('/about/') || item.url.includes('/projects/')) {
@@ -41,7 +41,7 @@ export default defineConfig({
         } else if (item.url.includes('/contact/')) {
           priority = 0.6;
         }
-        
+
         return {
           ...item,
           priority,
@@ -67,7 +67,7 @@ export default defineConfig({
       entrypoint: 'astro/assets/services/sharp',
       config: {
         limitInputPixels: false,
-      }
+      },
     },
     remotePatterns: [
       {
@@ -81,8 +81,8 @@ export default defineConfig({
       {
         protocol: 'https',
         hostname: 'cdn.jsdelivr.net',
-      }
-    ]
+      },
+    ],
   },
   vite: {
     build: {
@@ -92,7 +92,7 @@ export default defineConfig({
       rollupOptions: {
         output: {
           // 에셋 파일명 최적화
-          assetFileNames: (assetInfo) => {
+          assetFileNames: assetInfo => {
             if (!assetInfo.name) return 'assets/[name]-[hash][extname]';
             let extType = assetInfo.name.split('.').at(1);
             if (extType && /png|jpe?g|svg|gif|tiff|bmp|ico|webp|avif/i.test(extType)) {
@@ -101,7 +101,7 @@ export default defineConfig({
             return `assets/${extType || 'misc'}/[name]-[hash][extname]`;
           },
           // 청크 분할 최적화
-          manualChunks: (id) => {
+          manualChunks: id => {
             // 벤더 라이브러리 분리
             if (id.includes('node_modules')) {
               if (id.includes('astro')) {

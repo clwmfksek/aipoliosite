@@ -1,5 +1,5 @@
 // Performance monitoring script
-(function() {
+(function () {
   'use strict';
 
   // Check if performance APIs are supported
@@ -14,13 +14,13 @@
     fid: null,
     cls: null,
     fcp: null,
-    ttfb: null
+    ttfb: null,
   };
 
   // Largest Contentful Paint (LCP)
   function observeLCP() {
     try {
-      const observer = new PerformanceObserver((entryList) => {
+      const observer = new PerformanceObserver(entryList => {
         const entries = entryList.getEntries();
         if (entries.length > 0) {
           const lastEntry = entries[entries.length - 1];
@@ -37,9 +37,9 @@
   // First Input Delay (FID)
   function observeFID() {
     try {
-      const observer = new PerformanceObserver((entryList) => {
+      const observer = new PerformanceObserver(entryList => {
         const entries = entryList.getEntries();
-        entries.forEach((entry) => {
+        entries.forEach(entry => {
           if (entry.processingStart && entry.startTime) {
             vitals.fid = Math.round(entry.processingStart - entry.startTime);
             console.log('FID:', vitals.fid + 'ms');
@@ -56,9 +56,9 @@
   function observeCLS() {
     try {
       let clsValue = 0;
-      const observer = new PerformanceObserver((entryList) => {
+      const observer = new PerformanceObserver(entryList => {
         const entries = entryList.getEntries();
-        entries.forEach((entry) => {
+        entries.forEach(entry => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
           }
@@ -75,9 +75,9 @@
   // First Contentful Paint (FCP)
   function observeFCP() {
     try {
-      const observer = new PerformanceObserver((entryList) => {
+      const observer = new PerformanceObserver(entryList => {
         const entries = entryList.getEntries();
-        entries.forEach((entry) => {
+        entries.forEach(entry => {
           if (entry.name === 'first-contentful-paint') {
             vitals.fcp = Math.round(entry.startTime);
             console.log('FCP:', vitals.fcp + 'ms');
@@ -110,9 +110,19 @@
         const navEntry = performance.getEntriesByType('navigation')[0];
         if (navEntry) {
           console.group('📊 Page Performance Metrics');
-          console.log('DOM Content Loaded:', Math.round(navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart) + 'ms');
-          console.log('Full Page Load:', Math.round(navEntry.loadEventEnd - navEntry.loadEventStart) + 'ms');
-          console.log('Total Load Time:', Math.round(navEntry.loadEventEnd - navEntry.fetchStart) + 'ms');
+          console.log(
+            'DOM Content Loaded:',
+            Math.round(navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart) +
+              'ms'
+          );
+          console.log(
+            'Full Page Load:',
+            Math.round(navEntry.loadEventEnd - navEntry.loadEventStart) + 'ms'
+          );
+          console.log(
+            'Total Load Time:',
+            Math.round(navEntry.loadEventEnd - navEntry.fetchStart) + 'ms'
+          );
           console.groupEnd();
         }
       }, 0);
@@ -125,8 +135,8 @@
       setTimeout(() => {
         const resources = performance.getEntriesByType('resource');
         const resourceTypes = {};
-        
-        resources.forEach((resource) => {
+
+        resources.forEach(resource => {
           const type = resource.initiatorType || 'other';
           if (!resourceTypes[type]) {
             resourceTypes[type] = { count: 0, totalSize: 0, totalTime: 0 };
@@ -140,7 +150,9 @@
 
         console.group('📦 Resource Performance');
         Object.entries(resourceTypes).forEach(([type, stats]) => {
-          console.log(`${type}: ${stats.count} files, ${Math.round(stats.totalTime)}ms avg, ${Math.round(stats.totalSize / 1024)}KB`);
+          console.log(
+            `${type}: ${stats.count} files, ${Math.round(stats.totalTime)}ms avg, ${Math.round(stats.totalSize / 1024)}KB`
+          );
         });
         console.groupEnd();
       }, 1000);
@@ -165,7 +177,7 @@
   // Initialize all observers
   function init() {
     console.log('🚀 Performance monitoring initialized');
-    
+
     observeLCP();
     observeFID();
     observeCLS();
@@ -182,4 +194,4 @@
   } else {
     init();
   }
-})(); 
+})();

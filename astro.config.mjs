@@ -5,6 +5,9 @@ import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import compressor from 'astro-compressor';
 
+// Vercel 환경에서는 자체 압축 사용 (빌드 시간 단축)
+const isVercel = process.env.VERCEL === '1';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://portfolio.example.com', // 배포 시 실제 도메인으로 변경
@@ -14,47 +17,20 @@ export default defineConfig({
       configFile: './tailwind.config.mjs',
     }),
     sitemap({
-      // SEO 최적화를 위한 사이트맵 설정
-      customPages: [
-        'https://portfolio.example.com/', // 홈페이지 (최고 우선순위)
-        'https://portfolio.example.com/about/',
-        'https://portfolio.example.com/projects/',
-        'https://portfolio.example.com/contact/',
-        'https://portfolio.example.com/blog/',
-      ],
-      filter: page => {
-        // components-test 페이지는 사이트맵에서 제외
-        return !page.includes('/components-test');
-      },
-      serialize: item => {
-        // 페이지별 우선순위 설정
-        let priority = 0.5;
-
-        if (item.url === 'https://portfolio.example.com/') {
-          priority = 1.0;
-        } else if (item.url.includes('/about/') || item.url.includes('/projects/')) {
-          priority = 0.8;
-        } else if (item.url.includes('/blog/') && !item.url.endsWith('/blog/')) {
-          priority = 0.7;
-        } else if (item.url.includes('/blog/')) {
-          priority = 0.9;
-        } else if (item.url.includes('/contact/')) {
-          priority = 0.6;
-        }
-
-        return {
-          ...item,
-          priority,
-        };
-      },
+      // 간소화된 사이트맵 설정 (빌드 시간 최적화)
+      filter: page => !page.includes('/components-test'),
     }),
     mdx(),
-    // 압축 최적화 (프로덕션 빌드시에만)
-    compressor({
-      gzip: true,
-      brotli: true,
-    }),
-  ],
+    // Vercel이 아닌 환경에서만 압축 사용 (빌드 시간 최적화)
+    ...(isVercel
+      ? []
+      : [
+          compressor({
+            gzip: true,
+            brotli: true,
+          }),
+        ]),
+  ].filter(Boolean),
   output: 'static',
   build: {
     // 인라인 CSS 최적화
@@ -117,10 +93,10 @@ export default defineConfig({
       },
       // 청크 크기 경고 임계값 증가
       chunkSizeWarningLimit: 600,
-      // terser 설정 (더 나은 압축)
+      // terser 설정 (프로덕션에서만 console 제거)
       terserOptions: {
         compress: {
-          drop_console: true,
+          drop_console: process.env.NODE_ENV === 'production',
           drop_debugger: true,
         },
       },

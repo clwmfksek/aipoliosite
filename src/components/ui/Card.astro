@@ -1,0 +1,81 @@
+---
+import type { CardProps } from '../../types/components';
+
+interface Props extends CardProps {}
+
+const { 
+  variant = 'default', 
+  padding = 'md', 
+  hoverable = false, 
+  clickable = false, 
+  class: className = '',
+  ...rest 
+} = Astro.props;
+
+// 기본 스타일
+const baseStyles = 'bg-white dark:bg-gray-800 transition-all duration-200';
+
+// 변형별 스타일
+const variantStyles = {
+  default: 'rounded-lg',
+  bordered: 'rounded-lg border border-gray-200 dark:border-gray-700',
+  elevated: 'rounded-lg shadow-md hover:shadow-lg'
+};
+
+// 패딩 스타일
+const paddingStyles = {
+  sm: 'p-3',
+  md: 'p-4',
+  lg: 'p-6'
+};
+
+// 인터랙션 스타일
+const interactionStyles = {
+  hoverable: 'hover:shadow-lg hover:scale-[1.02] hover:-translate-y-1',
+  clickable: 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2'
+};
+
+// 최종 클래스 조합
+const cardClasses = [
+  baseStyles,
+  variantStyles[variant],
+  paddingStyles[padding],
+  hoverable ? interactionStyles.hoverable : '',
+  clickable ? interactionStyles.clickable : '',
+  className
+].filter(Boolean).join(' ');
+
+// clickable인 경우 div에 tabindex 추가
+const tabIndex = clickable ? 0 : undefined;
+---
+
+<div 
+  class={cardClasses}
+  tabindex={tabIndex}
+  role={clickable ? "button" : undefined}
+  {...rest}
+>
+  <slot />
+</div>
+
+<style>
+  /* 추가 다크모드 스타일 */
+  :global(.dark) .card-elevated {
+    @apply shadow-gray-900/25;
+  }
+  
+  /* 호버 애니메이션 최적화 */
+  .card-hoverable {
+    transform-origin: center;
+    will-change: transform, box-shadow;
+  }
+  
+  /* 포커스 상태 스타일링 */
+  .card-clickable:focus {
+    @apply ring-2 ring-primary-500 ring-offset-2;
+  }
+  
+  :global(.dark) .card-clickable:focus {
+    @apply ring-offset-gray-800;
+  }
+</style> 

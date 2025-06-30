@@ -1,0 +1,340 @@
+---
+interface WebsiteSchema {
+  name: string;
+  alternateName?: string;
+  url: string;
+  description: string;
+  author: PersonSchema;
+  potentialAction?: {
+    "@type": string;
+    target: string;
+    "query-input": string;
+  };
+}
+
+interface PersonSchema {
+  "@type": string;
+  name: string;
+  jobTitle: string;
+  url: string;
+  email?: string;
+  telephone?: string;
+  address?: {
+    "@type": "PostalAddress";
+    addressLocality: string;
+    addressCountry: string;
+  };
+  knowsAbout?: string[];
+  alumniOf?: {
+    "@type": "EducationalOrganization";
+    name: string;
+  };
+  workLocation?: {
+    "@type": "Place";
+    address: {
+      "@type": "PostalAddress";
+      addressLocality: string;
+      addressCountry: string;
+    };
+  };
+  sameAs?: string[];
+}
+
+interface BlogPostingSchema {
+  "@type": "BlogPosting";
+  headline: string;
+  description: string;
+  author: PersonSchema;
+  datePublished: string;
+  dateModified?: string;
+  image?: string;
+  url: string;
+  keywords?: string[];
+  mainEntityOfPage: {
+    "@type": "WebPage";
+    "@id": string;
+  };
+  publisher: {
+    "@type": "Organization";
+    name: string;
+    logo?: {
+      "@type": "ImageObject";
+      url: string;
+    };
+  };
+  articleSection?: string;
+  articleBody?: string;
+}
+
+interface ProjectSchema {
+  "@type": "CreativeWork";
+  name: string;
+  description: string;
+  author: PersonSchema;
+  dateCreated: string;
+  dateModified?: string;
+  url?: string;
+  image?: string;
+  keywords?: string[];
+  programmingLanguage?: string[];
+  codeRepository?: string;
+  license?: string;
+  about?: string;
+}
+
+interface ContactPointSchema {
+  "@type": "ContactPoint";
+  contactType: string;
+  email?: string;
+  telephone?: string;
+  url?: string;
+  availableLanguage?: string[];
+  areaServed?: string;
+  hoursAvailable?: {
+    "@type": "OpeningHoursSpecification";
+    dayOfWeek: string[];
+    opens?: string;
+    closes?: string;
+  };
+}
+
+interface Props {
+  type: 'website' | 'person' | 'blogPosting' | 'blog' | 'webPage' | 'contactPoint' | 'project';
+  data: any;
+}
+
+const { type, data } = Astro.props;
+
+// Base schema context
+const baseContext = "https://schema.org";
+
+// Common author/person data for the portfolio
+const authorData: PersonSchema = {
+  "@type": "Person",
+  name: "김개발",
+  jobTitle: "풀스택 웹 개발자",
+  url: Astro.site?.toString() || "https://portfolio.example.com",
+  email: "dev.kim@example.com",
+  telephone: "+82-10-0000-0000",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "서울",
+    addressCountry: "KR"
+  },
+  knowsAbout: [
+    "JavaScript", "TypeScript", "React", "Vue.js", "Node.js", 
+    "Express.js", "PostgreSQL", "MongoDB", "AWS", "Docker",
+    "Frontend Development", "Backend Development", "Full-stack Development",
+    "Web Development", "Software Engineering"
+  ],
+  alumniOf: {
+    "@type": "EducationalOrganization",
+    name: "서울대학교"
+  },
+  workLocation: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "서울",
+      addressCountry: "KR"
+    }
+  },
+  sameAs: [
+    "https://github.com/yourusername",
+    "https://linkedin.com/in/yourusername",
+    "https://twitter.com/yourusername"
+  ]
+};
+
+// Generate schema based on type
+let schema: any = {};
+
+switch (type) {
+  case 'website':
+    schema = {
+      "@context": baseContext,
+      "@type": "WebSite",
+      name: data.name || "김개발 포트폴리오",
+      alternateName: data.alternateName || "김개발",
+      url: Astro.site?.toString() || "https://portfolio.example.com",
+      description: data.description || "풀스택 웹 개발자의 포트폴리오 사이트",
+      author: authorData,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${Astro.site?.toString() || "https://portfolio.example.com"}/search?q={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      },
+      publisher: {
+        "@type": "Person",
+        name: "김개발"
+      },
+      inLanguage: "ko-KR",
+      copyrightHolder: authorData,
+      copyrightYear: new Date().getFullYear()
+    };
+    break;
+
+  case 'person':
+    schema = {
+      "@context": baseContext,
+      "@type": "Person",
+      ...authorData,
+      description: data.description || "5년 경력의 풀스택 웹 개발자",
+      image: data.image || "/images/profile.jpg",
+      hasOccupation: {
+        "@type": "Occupation",
+        name: "풀스택 웹 개발자",
+        occupationLocation: {
+          "@type": "City",
+          name: "서울"
+        },
+        estimatedSalary: {
+          "@type": "MonetaryAmountDistribution",
+          name: "Senior Developer Salary",
+          currency: "KRW"
+        },
+        experienceRequirements: "5+ years",
+        skills: "JavaScript, TypeScript, React, Node.js, PostgreSQL"
+      },
+      memberOf: {
+        "@type": "Organization",
+        name: "Korean Web Developer Community"
+      }
+    };
+    break;
+
+  case 'blogPosting':
+    schema = {
+      "@context": baseContext,
+      "@type": "BlogPosting",
+      headline: data.title,
+      description: data.description,
+      author: authorData,
+      datePublished: data.datePublished,
+      dateModified: data.dateModified || data.datePublished,
+      image: data.image,
+      url: data.url,
+      keywords: data.keywords || data.tags,
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": data.url
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "김개발 블로그",
+        logo: {
+          "@type": "ImageObject",
+          url: `${Astro.site?.toString() || "https://portfolio.example.com"}/favicon.svg`
+        }
+      },
+      articleSection: data.category || "Development",
+      articleBody: data.content ? data.content.substring(0, 500) + "..." : undefined,
+      wordCount: data.wordCount,
+      timeRequired: data.readTime ? `PT${data.readTime}M` : undefined,
+      inLanguage: "ko-KR",
+      isAccessibleForFree: true,
+      genre: ["Technology", "Programming", "Web Development"]
+    };
+    break;
+
+  case 'blog':
+    schema = {
+      "@context": baseContext,
+      "@type": "Blog",
+      name: data.name || "김개발 개발 블로그",
+      description: data.description || "웹 개발에 대한 경험과 튜토리얼을 공유하는 블로그",
+      url: data.url,
+      author: authorData,
+      publisher: {
+        "@type": "Organization",
+        name: "김개발 블로그"
+      },
+      inLanguage: "ko-KR",
+      about: ["Web Development", "JavaScript", "React", "Node.js", "Programming Tutorials"],
+      audience: {
+        "@type": "Audience",
+        audienceType: "Web Developers, Software Engineers, Students"
+      },
+      copyrightHolder: authorData,
+      copyrightYear: new Date().getFullYear()
+    };
+    break;
+
+  case 'project':
+    schema = {
+      "@context": baseContext,
+      "@type": "SoftwareApplication",
+      name: data.title,
+      description: data.description,
+      author: authorData,
+      dateCreated: data.dateCreated,
+      dateModified: data.dateModified,
+      url: data.liveUrl,
+      image: data.image,
+      keywords: data.technologies,
+      programmingLanguage: data.technologies,
+      codeRepository: data.githubUrl,
+      license: data.license || "MIT",
+      about: data.category,
+      applicationCategory: "WebApplication",
+      operatingSystem: "Web Browser",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD"
+      },
+      screenshot: data.image,
+      softwareVersion: "1.0.0",
+      releaseNotes: data.description
+    };
+    break;
+
+  case 'contactPoint':
+    schema = {
+      "@context": baseContext,
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      email: "dev.kim@example.com",
+      telephone: "+82-10-0000-0000",
+      url: data.url,
+      availableLanguage: ["Korean", "English"],
+      areaServed: {
+        "@type": "Country",
+        name: "South Korea"
+      },
+      hoursAvailable: {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00"
+      },
+      contactOption: "TollFree"
+    };
+    break;
+
+  case 'webPage':
+  default:
+    schema = {
+      "@context": baseContext,
+      "@type": "WebPage",
+      name: data.title,
+      description: data.description,
+      url: data.url,
+      author: authorData,
+      inLanguage: "ko-KR",
+      isPartOf: {
+        "@type": "WebSite",
+        name: "김개발 포트폴리오",
+        url: Astro.site?.toString() || "https://portfolio.example.com"
+      },
+      about: data.about || "Web Development Portfolio",
+      keywords: data.keywords,
+      dateModified: new Date().toISOString(),
+      copyrightHolder: authorData,
+      copyrightYear: new Date().getFullYear()
+    };
+    break;
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} /> 

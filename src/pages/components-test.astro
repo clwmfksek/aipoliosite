@@ -1,0 +1,249 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import Tag from '../components/ui/Tag.astro';
+import Badge from '../components/ui/Badge.astro';
+import Link from '../components/ui/Link.astro';
+import ThemeToggle from '../components/features/ThemeToggle.astro';
+---
+
+<Layout title="컴포넌트 테스트">
+  <main class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+      UI 컴포넌트 테스트
+    </h1>
+
+    <!-- ThemeToggle 컴포넌트 테스트 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">ThemeToggle 컴포넌트</h2>
+      <Card variant="bordered" padding="lg">
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-4 items-center">
+            <ThemeToggle size="sm" />
+            <ThemeToggle size="md" />
+            <ThemeToggle size="lg" />
+            <ThemeToggle size="md" showLabel={true} />
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            테마 토글 버튼을 클릭하여 다크/라이트 모드를 전환해보세요. 설정은 localStorage에 저장됩니다.
+          </p>
+        </div>
+      </Card>
+    </section>
+
+    <!-- Button 컴포넌트 테스트 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Button 컴포넌트</h2>
+      <Card variant="bordered" padding="lg">
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-4">
+            <Button>기본 버튼</Button>
+            <Button variant="secondary">보조 버튼</Button>
+            <Button variant="outline">외곽선 버튼</Button>
+            <Button variant="ghost">고스트 버튼</Button>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <Button size="sm">작은 버튼</Button>
+            <Button size="md">중간 버튼</Button>
+            <Button size="lg">큰 버튼</Button>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <Button disabled>비활성화</Button>
+            <Button loading>로딩 중</Button>
+            <Button fullWidth>전체 너비</Button>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <Button href="https://astro.build" external>외부 링크</Button>
+            <Button href="/about">내부 링크</Button>
+          </div>
+        </div>
+      </Card>
+    </section>
+
+    <!-- Card 컴포넌트 테스트 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Card 컴포넌트</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card variant="default" padding="md">
+          <h3 class="font-medium mb-2">기본 카드</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">기본 스타일의 카드입니다.</p>
+        </Card>
+        <Card variant="bordered" padding="md">
+          <h3 class="font-medium mb-2">테두리 카드</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">테두리가 있는 카드입니다.</p>
+        </Card>
+        <Card variant="elevated" padding="md" hoverable>
+          <h3 class="font-medium mb-2">그림자 카드</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">그림자와 호버 효과가 있는 카드입니다.</p>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Tag 컴포넌트 테스트 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Tag 컴포넌트</h2>
+      <Card variant="bordered" padding="lg">
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-lg font-medium mb-2">기본 태그들</h3>
+            <div class="flex flex-wrap gap-2">
+              <Tag>React</Tag>
+              <Tag color="secondary">TypeScript</Tag>
+              <Tag color="accent">Astro</Tag>
+              <Tag color="success">Tailwind</Tag>
+              <Tag color="warning">Next.js</Tag>
+              <Tag color="danger">Vue</Tag>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium mb-2">제거 가능한 태그들</h3>
+            <div class="flex flex-wrap gap-2">
+              <Tag removable>JavaScript</Tag>
+              <Tag removable color="secondary">Node.js</Tag>
+              <Tag removable color="accent">Prisma</Tag>
+              <Tag removable color="success">Supabase</Tag>
+              <Tag removable color="warning">MongoDB</Tag>
+              <Tag removable color="danger">Redis</Tag>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              X 버튼을 클릭하여 태그를 제거해보세요.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium mb-2">다양한 변형들</h3>
+            <div class="space-y-2">
+              <div class="flex flex-wrap gap-2">
+                <Tag variant="filled">Filled</Tag>
+                <Tag variant="outline">Outline</Tag>
+                <Tag variant="ghost">Ghost</Tag>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <Tag size="sm">Small</Tag>
+                <Tag size="md">Medium</Tag>
+                <Tag size="lg">Large</Tag>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </section>
+
+    <!-- Badge 컴포넌트 테스트 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Badge 컴포넌트</h2>
+      <Card variant="bordered" padding="lg">
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-4 items-center">
+            <Badge>기본</Badge>
+            <Badge color="success">성공</Badge>
+            <Badge color="warning">경고</Badge>
+            <Badge color="danger">위험</Badge>
+            <Badge color="info">정보</Badge>
+          </div>
+          <div class="flex flex-wrap gap-4 items-center">
+            <Badge variant="outline" color="primary">외곽선</Badge>
+            <Badge variant="soft" color="success">부드러운</Badge>
+            <Badge pulse color="danger">펄스</Badge>
+          </div>
+          <div class="flex flex-wrap gap-4 items-center">
+            <Badge dot color="success">온라인</Badge>
+            <Badge dot color="warning">대기 중</Badge>
+            <Badge dot color="danger">오프라인</Badge>
+          </div>
+        </div>
+      </Card>
+    </section>
+
+    <!-- Link 컴포넌트 테스트 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Link 컴포넌트</h2>
+      <Card variant="bordered" padding="lg">
+        <div class="space-y-4">
+          <div class="flex flex-wrap gap-4">
+            <Link href="/">기본 링크</Link>
+            <Link href="/" variant="secondary">보조 링크</Link>
+            <Link href="/" variant="accent">강조 링크</Link>
+            <Link href="/" variant="muted">뮤트 링크</Link>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <Link href="https://astro.build" external underline="always">항상 밑줄</Link>
+            <Link href="/" underline="hover">호버 시 밑줄</Link>
+            <Link href="/" underline="never">밑줄 없음</Link>
+          </div>
+        </div>
+      </Card>
+    </section>
+
+    <!-- 인터랙션 테스트 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">인터랙션 테스트</h2>
+      <Card variant="bordered" padding="lg">
+        <div class="space-y-4">
+          <p class="text-gray-600 dark:text-gray-400">
+            다음 기능들을 테스트해보세요:
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400">
+            <li>테마 토글 버튼으로 다크/라이트 모드 전환</li>
+            <li>제거 가능한 태그의 X 버튼 클릭</li>
+            <li>호버 효과가 있는 카드에 마우스 올리기</li>
+            <li>다양한 버튼들의 호버/포커스 상태</li>
+            <li>외부 링크 자동 감지 (새 탭에서 열림)</li>
+          </ul>
+        </div>
+      </Card>
+    </section>
+
+    <!-- 기술 스택 시연 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">기술 스택 표시 예시</h2>
+      <Card variant="elevated" padding="lg">
+        <h3 class="font-semibold mb-4">포트폴리오 웹사이트</h3>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <Tag color="primary">Astro</Tag>
+          <Tag color="accent">TypeScript</Tag>
+          <Tag color="success">Tailwind CSS</Tag>
+          <Tag color="secondary">MDX</Tag>
+          <Tag color="warning">Vercel</Tag>
+        </div>
+        <p class="text-gray-600 dark:text-gray-300 mb-4">
+          현대적인 정적 사이트 생성기를 사용한 고성능 포트폴리오 웹사이트
+        </p>
+        <div class="flex gap-2">
+          <Button href="#" variant="primary" size="sm">프로젝트 보기</Button>
+          <Button href="https://github.com" variant="outline" size="sm">GitHub</Button>
+        </div>
+      </Card>
+    </section>
+
+    <!-- 다크모드 테스트 안내 -->
+    <section class="text-center">
+      <Card variant="bordered" padding="lg">
+        <h3 class="font-semibold mb-2">다크모드 테스트</h3>
+        <p class="text-gray-600 dark:text-gray-300 mb-4">
+          브라우저의 다크모드 설정을 변경하여 모든 컴포넌트의 다크모드를 확인해보세요.
+        </p>
+        <Button href="/" variant="ghost">홈으로 돌아가기</Button>
+      </Card>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  // Tag removal event listener
+  document.addEventListener('tag-removed', (e) => {
+    console.log('Tag removed:', e.detail.text);
+  });
+  
+  // Theme change event listener
+  document.addEventListener('theme-changed', (e) => {
+    console.log('Theme changed:', e.detail.theme);
+  });
+</script>
+
+<style>
+  /* 추가 컴포넌트 테스트 스타일 */
+  .container {
+    min-height: 100vh;
+  }
+</style> 

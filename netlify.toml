@@ -1,0 +1,148 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+  
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+# Build processing options
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true
+
+# Headers configuration
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.github.com; frame-ancestors 'none';"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=(), accelerometer=(), gyroscope=(), magnetometer=(), serial=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    X-DNS-Prefetch-Control = "on"
+
+# Static assets - long cache
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/*.{jpg,jpeg,png,webp,avif,svg,css,js,woff,woff2,ttf,eot}"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Vary = "Accept-Encoding"
+
+# HTML files - short cache
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Service Worker - no cache
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# PWA Manifest - daily cache
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Sitemap - daily cache
+[[headers]]
+  for = "/sitemap*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Robots.txt - daily cache
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Redirects
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/portfolio"
+  to = "/projects"
+  status = 301
+  force = true
+
+# API redirects
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# SPA fallback (optional - for future client-side routing)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Edge Functions (optional - for future use)
+[[edge_functions]]
+  function = "transform"
+  path = "/*"
+
+# Plugin configuration
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+[[plugins]]
+  package = "netlify-plugin-lighthouse"
+  [plugins.inputs]
+    output_path = "lighthouse-reports"
+
+# Environment variables (for development)
+[context.production.environment]
+  NODE_ENV = "production"
+  ASTRO_TELEMETRY_DISABLED = "1"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "production"
+  ASTRO_TELEMETRY_DISABLED = "1"
+
+[context.branch-deploy.environment]
+  NODE_ENV = "development"
+  ASTRO_TELEMETRY_DISABLED = "1"
+
+# Dev command for local development
+[dev]
+  command = "npm run dev"
+  port = 4321
+  publish = "dist"
+  autoLaunch = true 

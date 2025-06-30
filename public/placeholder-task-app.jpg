@@ -1,0 +1,53 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="100%" height="100%" fill="#f8fafc"/>
+  
+  <!-- 앱 화면 모형 -->
+  <rect x="30" y="30" width="340" height="240" fill="#ffffff" rx="12" stroke="#e2e8f0" stroke-width="2"/>
+  
+  <!-- 헤더 -->
+  <rect x="30" y="30" width="340" height="50" fill="#1e293b" rx="12"/>
+  <rect x="30" y="42" width="340" height="38" fill="#1e293b"/>
+  
+  <!-- 헤더 텍스트 영역 -->
+  <rect x="50" y="45" width="120" height="8" fill="#94a3b8" rx="4"/>
+  <circle cx="320" cy="55" r="8" fill="#94a3b8"/>
+  
+  <!-- 칸반 보드 컬럼들 -->
+  <rect x="50" y="100" width="80" height="140" fill="#f1f5f9" rx="8" stroke="#e2e8f0"/>
+  <rect x="140" y="100" width="80" height="140" fill="#fef3c7" rx="8" stroke="#f59e0b"/>
+  <rect x="230" y="100" width="80" height="140" fill="#dcfce7" rx="8" stroke="#22c55e"/>
+  
+  <!-- 컬럼 헤더 -->
+  <rect x="60" y="110" width="60" height="6" fill="#64748b" rx="3"/>
+  <rect x="150" y="110" width="60" height="6" fill="#92400e" rx="3"/>
+  <rect x="240" y="110" width="60" height="6" fill="#166534" rx="3"/>
+  
+  <!-- 태스크 카드들 -->
+  <rect x="55" y="125" width="70" height="25" fill="#ffffff" rx="4" stroke="#e2e8f0"/>
+  <rect x="55" y="155" width="70" height="25" fill="#ffffff" rx="4" stroke="#e2e8f0"/>
+  
+  <rect x="145" y="125" width="70" height="25" fill="#ffffff" rx="4" stroke="#f59e0b"/>
+  
+  <rect x="235" y="125" width="70" height="25" fill="#ffffff" rx="4" stroke="#22c55e"/>
+  <rect x="235" y="155" width="70" height="25" fill="#ffffff" rx="4" stroke="#22c55e"/>
+  <rect x="235" y="185" width="70" height="25" fill="#ffffff" rx="4" stroke="#22c55e"/>
+  
+  <!-- 카드 내용 (작은 선들) -->
+  <rect x="60" y="130" width="40" height="3" fill="#64748b" rx="1"/>
+  <rect x="60" y="137" width="25" height="2" fill="#94a3b8" rx="1"/>
+  <rect x="60" y="143" width="35" height="2" fill="#94a3b8" rx="1"/>
+  
+  <rect x="60" y="160" width="45" height="3" fill="#64748b" rx="1"/>
+  <rect x="60" y="167" width="30" height="2" fill="#94a3b8" rx="1"/>
+  
+  <rect x="150" y="130" width="40" height="3" fill="#64748b" rx="1"/>
+  <rect x="150" y="137" width="25" height="2" fill="#94a3b8" rx="1"/>
+  
+  <rect x="240" y="130" width="40" height="3" fill="#64748b" rx="1"/>
+  <rect x="240" y="160" width="35" height="3" fill="#64748b" rx="1"/>
+  <rect x="240" y="190" width="30" height="3" fill="#64748b" rx="1"/>
+  
+  <!-- 텍스트 -->
+  <text x="200" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#64748b">태스크 관리 앱</text>
+</svg> 

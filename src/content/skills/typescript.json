@@ -1,0 +1,13 @@
+{
+  "name": "TypeScript",
+  "category": "frontend",
+  "level": "advanced",
+  "experience": 2,
+  "icon": "🔷",
+  "color": "#3178C6",
+  "description": "정적 타입 검사를 통한 안전한 JavaScript 개발",
+  "certifications": [],
+  "projects": ["portfolio-website"],
+  "featured": true,
+  "order": 2
+} 

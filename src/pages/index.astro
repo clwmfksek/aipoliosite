@@ -1,11 +1,380 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/sections/HeroSection.astro';
+import ProjectsShowcaseSection from '../components/sections/ProjectsShowcaseSection.astro';
+import AboutMeSection from '../components/sections/AboutMeSection.astro';
+import SkillsSection from '../components/sections/SkillsSection.astro';
+import ContactSection from '../components/sections/ContactSection.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Sample data for the homepage
+const heroData = {
+	name: "김개발",
+	title: "풀스택 개발자",
+	subtitle: "혁신적인 웹 경험을 만들어갑니다",
+	description: "최신 기술과 창의적인 아이디어로 사용자 중심의 웹 애플리케이션을 개발하며, 비즈니스 목표와 기술적 우수성을 조화시키는 솔루션을 제공합니다.",
+	primaryCta: {
+		text: "프로젝트 보기",
+		href: "#projects"
+	},
+	secondaryCta: {
+		text: "연락하기",
+		href: "#contact"
+	}
+};
+
+const featuredProjects = [
+	{
+		id: "1",
+		title: "E-커머스 플랫폼",
+		description: "Next.js와 Stripe를 활용한 현대적인 온라인 쇼핑몰입니다. 실시간 결제, 재고 관리, 사용자 리뷰 시스템을 포함합니다.",
+		image: "/images/project1.jpg",
+		technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Stripe", "PostgreSQL"],
+		category: "Web Development",
+		status: "completed" as const,
+		featured: true,
+		liveUrl: "https://example.com",
+		githubUrl: "https://github.com/example/ecommerce"
+	},
+	{
+		id: "2", 
+		title: "태스크 관리 앱",
+		description: "팀 협업을 위한 실시간 태스크 관리 애플리케이션입니다. 드래그 앤 드롭, 실시간 알림, 팀 채팅 기능을 제공합니다.",
+		image: "/images/project2.jpg",
+		technologies: ["React", "Node.js", "Socket.io", "MongoDB", "Express"],
+		category: "Full Stack",
+		status: "completed" as const,
+		featured: true,
+		liveUrl: "https://example.com",
+		githubUrl: "https://github.com/example/taskmanager"
+	},
+	{
+		id: "3",
+		title: "AI 기반 추천 시스템",
+		description: "머신러닝을 활용한 개인화된 콘텐츠 추천 시스템입니다. 사용자 행동 분석과 협업 필터링을 통한 정확한 추천을 제공합니다.",
+		image: "/images/project3.jpg", 
+		technologies: ["Python", "FastAPI", "TensorFlow", "Redis", "Docker"],
+		category: "AI/ML",
+		status: "in-progress" as const,
+		featured: true,
+		liveUrl: "https://example.com",
+		githubUrl: "https://github.com/example/ai-recommendation"
+	}
+];
+
+const aboutStats = [
+	{ number: "3+", label: "Years", description: "개발 경험" },
+	{ number: "50+", label: "Projects", description: "완료한 프로젝트" },
+	{ number: "15+", label: "Technologies", description: "사용 기술" },
+	{ number: "∞", label: "Coffee", description: "마신 커피 잔 수" }
+];
+
+const aboutHighlights = [
+	{
+		icon: "💡",
+		title: "창의적 문제 해결",
+		description: "복잡한 비즈니스 요구사항을 효율적이고 우아한 코드로 변환하는 것을 좋아합니다."
+	},
+	{
+		icon: "🌱", 
+		title: "지속적인 학습",
+		description: "빠르게 변화하는 기술 환경에서 항상 최신 트렌드를 따라가며 성장하고 있습니다."
+	},
+	{
+		icon: "🤝",
+		title: "협업과 소통", 
+		description: "팀워크를 중시하며, 명확한 소통을 통해 프로젝트의 성공을 이끌어냅니다."
+	},
+	{
+		icon: "⚡",
+		title: "성능 최적화",
+		description: "사용자 경험을 개선하기 위해 항상 성능과 접근성을 고려하여 개발합니다."
+	}
+];
+
+const skillCategories = [
+	{
+		name: "Frontend",
+		description: "사용자 인터페이스 및 경험",
+		color: "blue" as const,
+		skills: [
+			{ name: "React", level: "advanced" as const, icon: "⚛️", experience: "3년", lastUsed: "2024" },
+			{ name: "Vue.js", level: "intermediate" as const, icon: "💚", experience: "2년", lastUsed: "2024" },
+			{ name: "TypeScript", level: "advanced" as const, icon: "🔷", experience: "2년", lastUsed: "2024" },
+			{ name: "JavaScript", level: "expert" as const, icon: "🟨", experience: "4년", lastUsed: "2024" },
+			{ name: "Tailwind CSS", level: "advanced" as const, icon: "💨", experience: "2년", lastUsed: "2024" }
+		]
+	},
+	{
+		name: "Backend",
+		description: "서버 및 API 개발", 
+		color: "green" as const,
+		skills: [
+			{ name: "Node.js", level: "advanced" as const, icon: "🟢", experience: "3년", lastUsed: "2024" },
+			{ name: "Express.js", level: "advanced" as const, icon: "🚂", experience: "3년", lastUsed: "2024" },
+			{ name: "Python", level: "intermediate" as const, icon: "🐍", experience: "2년", lastUsed: "2024" },
+			{ name: "PostgreSQL", level: "advanced" as const, icon: "🐘", experience: "2년", lastUsed: "2024" }
+		]
+	},
+	{
+		name: "DevOps & Tools",
+		description: "개발 도구 및 배포",
+		color: "orange" as const,
+		skills: [
+			{ name: "Git", level: "advanced" as const, icon: "🌿", experience: "4년", lastUsed: "2024" },
+			{ name: "Docker", level: "intermediate" as const, icon: "🐳", experience: "2년", lastUsed: "2024" },
+			{ name: "AWS", level: "intermediate" as const, icon: "☁️", experience: "1년", lastUsed: "2024" },
+			{ name: "Vercel", level: "advanced" as const, icon: "▲", experience: "2년", lastUsed: "2024" }
+		]
+	}
+];
+
+const contactInfo = [
+	{
+		type: "email" as const,
+		label: "이메일",
+		value: "dev.kim@example.com",
+		href: "mailto:dev.kim@example.com",
+		icon: "📧"
+	},
+	{
+		type: "location" as const,
+		label: "위치",
+		value: "서울, 대한민국",
+		icon: "📍"
+	},
+	{
+		type: "availability" as const,
+		label: "가용성",
+		value: "프리랜스/정규직 가능",
+		icon: "💼"
+	}
+];
+
+const socialLinks = [
+	{
+		name: "GitHub",
+		href: "https://github.com/yourusername",
+		icon: "🐙",
+		color: "hover:text-gray-700 dark:hover:text-gray-300",
+		username: "@yourusername"
+	},
+	{
+		name: "LinkedIn", 
+		href: "https://linkedin.com/in/yourusername",
+		icon: "💼",
+		color: "hover:text-blue-600 dark:hover:text-blue-400",
+		username: "in/yourusername"
+	},
+	{
+		name: "Twitter",
+		href: "https://twitter.com/yourusername",
+		icon: "🐦", 
+		color: "hover:text-sky-500 dark:hover:text-sky-400",
+		username: "@yourusername"
+	}
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout 
+	title="김개발 - 풀스택 개발자 포트폴리오" 
+	description="혁신적인 웹 경험을 만드는 풀스택 개발자 김개발의 포트폴리오입니다. React, Node.js, TypeScript를 활용한 다양한 프로젝트를 만나보세요."
+	image="/og-portfolio.jpg"
+>
+	<!-- Screen reader friendly main heading -->
+	<h1 class="sr-only">김개발 - 풀스택 개발자 포트폴리오</h1>
+	
+	<!-- Structured Data for Website -->
+	<StructuredData 
+		type="website" 
+		data={{
+			name: "김개발 포트폴리오",
+			alternateName: "김개발",
+			description: "혁신적인 웹 경험을 만드는 풀스택 개발자 김개발의 포트폴리오입니다. React, Node.js, TypeScript를 활용한 다양한 프로젝트를 만나보세요."
+		}} 
+		slot="head"
+	/>
+	
+	<!-- Person Schema for Developer -->
+	<StructuredData 
+		type="person" 
+		data={{
+			description: "5년 경력의 풀스택 웹 개발자로, React, Vue.js, Node.js를 전문으로 합니다.",
+			image: "/images/profile.jpg"
+		}} 
+		slot="head"
+	/>
+	<!-- Hero Section -->
+	<HeroSection 
+		name={heroData.name}
+		title={heroData.title}
+		subtitle={heroData.subtitle}
+		description={heroData.description}
+		primaryCta={heroData.primaryCta}
+		secondaryCta={heroData.secondaryCta}
+		backgroundPattern={true}
+	/>
+
+	<!-- Featured Projects Section -->
+	<ProjectsShowcaseSection
+		title="주요 프로젝트"
+		subtitle="Featured Projects"
+		description="제가 개발한 다양한 프로젝트들을 만나보세요. 각 프로젝트는 독특한 도전과 혁신적인 솔루션을 담고 있습니다."
+		projects={featuredProjects}
+		showAll={false}
+		maxItems={3}
+		enableFiltering={true}
+		id="projects"
+	/>
+
+	<!-- About Me Section -->
+	<AboutMeSection
+		title="개발자 소개"
+		subtitle="About Me" 
+		mainDescription="안녕하세요! 저는 사용자 경험과 기술적 우수성을 모두 추구하는 풀스택 개발자입니다. 새로운 기술을 배우는 것을 좋아하며, 복잡한 문제를 창의적인 솔루션으로 해결하는 데 열정을 가지고 있습니다."
+		stats={aboutStats}
+		highlights={aboutHighlights}
+		personalInfo={{
+			location: "대한민국, 서울",
+			email: "dev.kim@example.com",
+			availability: "프리랜스/정규직 가능",
+			languages: ["한국어 (Native)", "English (Business)", "日本語 (Basic)"],
+			interests: ["오픈소스 기여", "기술 블로그 작성", "사진", "여행", "독서"]
+		}}
+		showPersonalDetails={true}
+	/>
+
+	<!-- Skills & Technologies Section -->
+	<SkillsSection
+		title="기술 스택"
+		subtitle="Skills & Technologies"
+		description="다양한 프로젝트를 통해 습득하고 발전시켜온 기술들입니다"
+		categories={skillCategories}
+		showLevels={true}
+		showExperience={true}
+		gridLayout="auto"
+	/>
+
+	<!-- Contact Section -->
+	<ContactSection
+		title="연락하기"
+		subtitle="Let's Work Together"
+		description="새로운 프로젝트나 협업 기회에 대해 이야기해보세요. 언제든지 연락 주시면 빠른 시일 내에 답변드리겠습니다."
+		contactInfo={contactInfo}
+		socialLinks={socialLinks}
+		enableForm={true}
+		id="contact"
+	/>
 </Layout>
+
+<style>
+	/* Screen reader only class */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	/* Smooth scrolling for anchor links */
+	html {
+		scroll-behavior: smooth;
+	}
+
+	/* Section spacing adjustments */
+	section + section {
+		scroll-margin-top: 2rem;
+	}
+
+	/* Custom section padding for better visual flow */
+	:global(.hero-section) {
+		min-height: 100vh;
+		display: flex;
+		align-items: center;
+	}
+
+	/* Ensure sections have proper IDs for navigation */
+	:global(#projects),
+	:global(#contact) {
+		scroll-margin-top: 80px; /* Account for fixed header */
+	}
+</style>
+
+<script>
+	// Smooth scroll for internal links
+	document.addEventListener('DOMContentLoaded', function() {
+		// Handle smooth scrolling for anchor links
+		const anchorLinks = document.querySelectorAll('a[href^="#"]');
+		
+		anchorLinks.forEach(link => {
+			link.addEventListener('click', function(this: HTMLAnchorElement, e: Event) {
+				e.preventDefault();
+				
+				const targetId = this.getAttribute('href');
+				if (!targetId) return;
+				
+				const targetElement = document.querySelector(targetId);
+				
+				if (targetElement) {
+					const headerOffset = 80; // Account for fixed header
+					const elementPosition = targetElement.getBoundingClientRect().top;
+					const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+					
+					window.scrollTo({
+						top: offsetPosition,
+						behavior: 'smooth'
+					});
+				}
+			});
+		});
+
+		// Add intersection observer for navigation highlighting
+		const sections = document.querySelectorAll('section[id]');
+		const navLinks = document.querySelectorAll('nav a[href^="#"]');
+		
+		const observerOptions: IntersectionObserverInit = {
+			rootMargin: '-20% 0px -80% 0px'
+		};
+		
+		const observer = new IntersectionObserver(function(entries: IntersectionObserverEntry[]) {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					// Remove active class from all nav links
+					navLinks.forEach(link => {
+						link.classList.remove('active');
+					});
+					
+					// Add active class to current section's nav link
+					const currentLink = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+					if (currentLink) {
+						currentLink.classList.add('active');
+					}
+				}
+			});
+		}, observerOptions);
+		
+		sections.forEach(section => {
+			observer.observe(section);
+		});
+	});
+
+	// Performance optimization: Preload critical resources
+	window.addEventListener('load', function() {
+		// Preload next page resources if needed
+		const criticalImages = document.querySelectorAll('img[data-preload]');
+		criticalImages.forEach(img => {
+			if (img instanceof HTMLImageElement) {
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.as = 'image';
+				link.href = img.src;
+				document.head.appendChild(link);
+			}
+		});
+	});
+</script>

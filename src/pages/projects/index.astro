@@ -1,0 +1,485 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import MainContent from '../../components/layout/MainContent.astro';
+import Card from '../../components/ui/Card.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+
+// 모든 프로젝트 가져오기
+const allProjects = await getCollection('projects');
+
+// 필터링 및 정렬을 위한 데이터 처리
+const publishedProjects = allProjects.filter(p => p.data.published);
+
+// 날짜순으로 정렬 (최신순)
+const sortedProjects = publishedProjects.sort((a, b) => 
+  b.data.date.getTime() - a.data.date.getTime()
+);
+
+// 필터링을 위한 고유 기술과 카테고리 추출
+const allTechnologies = [...new Set(publishedProjects.flatMap(p => p.data.tech))].sort();
+const allCategories = [...new Set(publishedProjects.map(p => p.data.category))].sort();
+
+// 페이지 정보
+const pageTitle = "프로젝트 포트폴리오 - 김개발 | React, Node.js, TypeScript 프로젝트 갤러리";
+const pageDescription = `${publishedProjects.length}개의 웹 개발 프로젝트를 확인해보세요. E-커머스, SaaS 플랫폼, AI 추천 시스템 등 React, Vue.js, Node.js, Python을 활용한 풀스택 개발 사례들을 소개합니다.`;
+
+// 클라이언트 사이드에서 사용할 프로젝트 데이터
+const projectsForClient = sortedProjects.map((project, index) => ({
+  id: index,
+  title: project.data.title,
+  description: project.data.description,
+  category: project.data.category,
+  tech: project.data.tech,
+  status: project.data.status,
+  date: project.data.date.toISOString(),
+  slug: project.slug,
+  image: project.data.image,
+  github: project.data.githubUrl || project.data.github || '',
+  demo: project.data.demoUrl || project.data.demo || ''
+}));
+---
+
+<Layout 
+  title={pageTitle} 
+  description={pageDescription}
+  image="/favicon.svg"
+>
+  <!-- Screen reader friendly main heading -->
+  <h1 class="sr-only">프로젝트 포트폴리오 - 김개발</h1>
+  
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-secondary-900 dark:to-secondary-800 py-16">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="text-center">
+        <h2 class="text-4xl lg:text-5xl font-bold text-secondary-900 dark:text-white mb-6">
+          웹 개발 프로젝트 포트폴리오
+        </h2>
+        <p class="text-xl text-secondary-600 dark:text-secondary-300 max-w-3xl mx-auto mb-8">
+          지금까지 진행한 다양한 프로젝트들을 살펴보세요. 각 프로젝트는 새로운 기술과 도전을 통해 성장하는 과정을 담고 있습니다.
+        </p>
+        
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-2xl mx-auto">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+              {publishedProjects.length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              총 프로젝트
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-600">
+              {publishedProjects.filter(p => p.data.status === 'completed').length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              완료됨
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600">
+              {publishedProjects.filter(p => p.data.status === 'in-progress').length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              진행 중
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-orange-600">
+              {allTechnologies.length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              사용 기술
+            </div>
+          </div>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Filtering and Sorting Controls -->
+  <section class="py-8 bg-white dark:bg-secondary-900 border-b border-secondary-200 dark:border-secondary-700">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <!-- Filter Controls -->
+        <div class="flex flex-col sm:flex-row gap-4 flex-1">
+          <!-- Search Input -->
+          <div class="relative flex-1 max-w-md">
+            <input
+              type="text"
+              id="project-search"
+              placeholder="프로젝트 검색..."
+              class="w-full px-4 py-2 pl-10 border border-secondary-300 dark:border-secondary-600 rounded-lg bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <svg class="absolute left-3 top-2.5 h-5 w-5 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+
+          <!-- Category Filter -->
+          <select 
+            id="category-filter"
+            class="px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">모든 카테고리</option>
+            {allCategories.map(category => (
+              <option value={category}>
+                {category === 'web' ? '웹' : 
+                 category === 'mobile' ? '모바일' : 
+                 category === 'desktop' ? '데스크탑' : 
+                 category === 'backend' ? '백엔드' : 
+                 category === 'fullstack' ? '풀스택' : '기타'}
+              </option>
+            ))}
+          </select>
+
+          <!-- Technology Filter -->
+          <select 
+            id="tech-filter"
+            class="px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="">모든 기술</option>
+            {allTechnologies.map(tech => (
+              <option value={tech}>{tech}</option>
+            ))}
+          </select>
+        </div>
+
+        <!-- Sort and Reset Controls -->
+        <div class="flex gap-3">
+          <!-- Sort Dropdown -->
+          <select 
+            id="sort-select"
+            class="px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="date-desc">최신순</option>
+            <option value="date-asc">오래된순</option>
+            <option value="title-asc">이름순 (A-Z)</option>
+            <option value="title-desc">이름순 (Z-A)</option>
+          </select>
+
+          <!-- Reset Button -->
+          <Button 
+            variant="outline" 
+            size="sm" 
+            id="reset-filters"
+            class="flex-shrink-0"
+          >
+            초기화
+          </Button>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="mt-4">
+        <p class="text-secondary-600 dark:text-secondary-300 text-sm">
+          <span id="results-count">{sortedProjects.length}</span>개의 프로젝트
+        </p>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Projects Grid -->
+  <section class="py-12 bg-secondary-50 dark:bg-secondary-800">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div id="projects-grid" class="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+        {sortedProjects.map((project) => (
+          <Card class="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+            <!-- Project Image -->
+            <div class="relative overflow-hidden rounded-t-lg">
+              <img 
+                src={project.data.image} 
+                alt={project.data.title}
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+              <!-- Status Badge -->
+              <div class="absolute top-3 right-3">
+                <Badge 
+                  variant={
+                    project.data.status === 'completed' ? 'filled' :
+                    project.data.status === 'in-progress' ? 'filled' : 'outline'
+                  }
+                  color={
+                    project.data.status === 'completed' ? 'success' :
+                    project.data.status === 'in-progress' ? 'primary' : 'secondary'
+                  }
+                  size="sm"
+                >
+                  {project.data.status === 'completed' ? '완료' :
+                   project.data.status === 'in-progress' ? '진행중' : '계획됨'}
+                </Badge>
+              </div>
+            </div>
+
+            <!-- Project Content -->
+            <div class="p-6">
+              <!-- Title and Date -->
+              <div class="flex justify-between items-start mb-3">
+                <h3 class="text-xl font-bold text-secondary-900 dark:text-white">
+                  {project.data.title}
+                </h3>
+                <span class="text-sm text-secondary-500 dark:text-secondary-400 ml-2">
+                  {project.data.date.toLocaleDateString('ko-KR')}
+                </span>
+              </div>
+
+              <!-- Description -->
+              <p class="text-secondary-600 dark:text-secondary-300 mb-4">
+                {project.data.description}
+              </p>
+
+              <!-- Technologies -->
+              <div class="mb-4">
+                <div class="flex flex-wrap gap-1">
+                  {project.data.tech.slice(0, 4).map((tech) => (
+                    <Badge variant="outline" color="secondary" size="sm">
+                      {tech}
+                    </Badge>
+                  ))}
+                  {project.data.tech.length > 4 && (
+                    <Badge variant="outline" color="secondary" size="sm">
+                      +{project.data.tech.length - 4}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              <!-- Links -->
+              <div class="flex gap-3">
+                <Button 
+                  href={`/projects/${project.slug}`}
+                  variant="primary"
+                  size="sm"
+                  class="flex-1"
+                >
+                  자세히 보기
+                </Button>
+                {(project.data.demoUrl || project.data.demo) && (
+                  <Button 
+                    href={project.data.demoUrl || project.data.demo}
+                    variant="outline"
+                    size="sm"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex-shrink-0"
+                  >
+                    데모
+                  </Button>
+                )}
+                {(project.data.githubUrl || project.data.github) && (
+                  <Button 
+                    href={project.data.githubUrl || project.data.github}
+                    variant="outline"
+                    size="sm"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex-shrink-0"
+                  >
+                    GitHub
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </MainContent>
+  </section>
+</Layout>
+
+<style>
+  /* Smooth transitions for grid animations */
+  .project-card {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+</style>
+
+<script define:vars={{ projects: projectsForClient }}>
+  // 프로젝트 데이터를 전역으로 저장
+  const projectsData = projects.map(project => ({
+    ...project,
+    date: new Date(project.date)
+  }));
+
+  let filteredProjects = [...projectsData];
+
+  // DOM 요소들
+  const searchInput = document.getElementById('project-search');
+  const categoryFilter = document.getElementById('category-filter');
+  const techFilter = document.getElementById('tech-filter');
+  const sortSelect = document.getElementById('sort-select');
+  const resetButton = document.getElementById('reset-filters');
+  const projectsGrid = document.getElementById('projects-grid');
+  const resultsCount = document.getElementById('results-count');
+
+  // 프로젝트 렌더링 함수
+  function renderProjects(projects) {
+    projectsGrid.innerHTML = projects.map(project => `
+      <div class="project-card hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group bg-white dark:bg-secondary-800 rounded-lg overflow-hidden shadow-md">
+        <!-- Project Image -->
+        <div class="relative overflow-hidden">
+          <img 
+            src="${project.image}" 
+            alt="${project.title}"
+            class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+          />
+          <!-- Status Badge -->
+          <div class="absolute top-3 right-3">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              project.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+              project.status === 'in-progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
+              'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+            }">
+              ${project.status === 'completed' ? '완료' :
+                project.status === 'in-progress' ? '진행중' : '계획됨'}
+            </span>
+          </div>
+        </div>
+
+        <!-- Project Content -->
+        <div class="p-6">
+          <!-- Title and Date -->
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="text-xl font-bold text-secondary-900 dark:text-white">
+              ${project.title}
+            </h3>
+            <span class="text-sm text-secondary-500 dark:text-secondary-400 ml-2">
+              ${project.date.toLocaleDateString('ko-KR')}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <p class="text-secondary-600 dark:text-secondary-300 mb-4">
+            ${project.description}
+          </p>
+
+          <!-- Technologies -->
+          <div class="mb-4">
+            <div class="flex flex-wrap gap-1">
+              ${project.tech.slice(0, 4).map(tech => `
+                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-secondary-100 text-secondary-800 dark:bg-secondary-700 dark:text-secondary-200 border border-secondary-300 dark:border-secondary-600">
+                  ${tech}
+                </span>
+              `).join('')}
+              ${project.tech.length > 4 ? `
+                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-secondary-100 text-secondary-800 dark:bg-secondary-700 dark:text-secondary-200 border border-secondary-300 dark:border-secondary-600">
+                  +${project.tech.length - 4}
+                </span>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Links -->
+          <div class="flex gap-3">
+            <a 
+              href="/projects/${project.slug}"
+              class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+            >
+              자세히 보기
+            </a>
+            ${project.demo ? `
+              <a 
+                href="${project.demo}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex-shrink-0 inline-flex items-center px-4 py-2 border border-secondary-300 dark:border-secondary-600 text-sm font-medium rounded-md text-secondary-700 dark:text-secondary-200 bg-white dark:bg-secondary-800 hover:bg-secondary-50 dark:hover:bg-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+              >
+                데모
+              </a>
+            ` : ''}
+            ${project.github ? `
+              <a 
+                href="${project.github}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex-shrink-0 inline-flex items-center px-4 py-2 border border-secondary-300 dark:border-secondary-600 text-sm font-medium rounded-md text-secondary-700 dark:text-secondary-200 bg-white dark:bg-secondary-800 hover:bg-secondary-50 dark:hover:bg-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+              >
+                GitHub
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // 결과 개수 업데이트
+    resultsCount.textContent = projects.length;
+
+    // 애니메이션 적용
+    const cards = projectsGrid.querySelectorAll('.project-card');
+    cards.forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 100);
+    });
+  }
+
+  // 필터링 함수
+  function filterProjects() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedCategory = categoryFilter.value;
+    const selectedTech = techFilter.value;
+
+    filteredProjects = projectsData.filter(project => {
+      const matchesSearch = project.title.toLowerCase().includes(searchTerm) ||
+                           project.description.toLowerCase().includes(searchTerm);
+      const matchesCategory = !selectedCategory || project.category === selectedCategory;
+      const matchesTech = !selectedTech || project.tech.includes(selectedTech);
+
+      return matchesSearch && matchesCategory && matchesTech;
+    });
+
+    sortProjects();
+  }
+
+  // 정렬 함수
+  function sortProjects() {
+    const sortBy = sortSelect.value;
+
+    filteredProjects.sort((a, b) => {
+      switch (sortBy) {
+        case 'date-desc':
+          return b.date.getTime() - a.date.getTime();
+        case 'date-asc':
+          return a.date.getTime() - b.date.getTime();
+        case 'title-asc':
+          return a.title.localeCompare(b.title);
+        case 'title-desc':
+          return b.title.localeCompare(a.title);
+        default:
+          return 0;
+      }
+    });
+
+    renderProjects(filteredProjects);
+  }
+
+  // 필터 초기화
+  function resetFilters() {
+    searchInput.value = '';
+    categoryFilter.value = '';
+    techFilter.value = '';
+    sortSelect.value = 'date-desc';
+    filterProjects();
+  }
+
+  // 이벤트 리스너
+  document.addEventListener('DOMContentLoaded', () => {
+    // 초기 렌더링
+    filterProjects();
+
+    // 이벤트 리스너 등록
+    searchInput.addEventListener('input', filterProjects);
+    categoryFilter.addEventListener('change', filterProjects);
+    techFilter.addEventListener('change', filterProjects);
+    sortSelect.addEventListener('change', filterProjects);
+    resetButton.addEventListener('click', resetFilters);
+  });
+</script>

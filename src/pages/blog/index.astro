@@ -1,0 +1,635 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import MainContent from '../../components/layout/MainContent.astro';
+import Button from '../../components/ui/Button.astro';
+
+// 모든 블로그 포스트 가져오기
+const allPosts = await getCollection('blog', ({ data }) => {
+  // 프로덕션에서는 draft가 아닌 포스트만, 개발에서는 모든 포스트
+  return import.meta.env.PROD ? !data.draft && data.published : true;
+});
+
+// 필터링 및 정렬을 위한 데이터 처리
+const publishedPosts = allPosts.filter(p => p.data.published);
+
+// 날짜순으로 정렬 (최신순)
+const sortedPosts = publishedPosts.sort((a, b) => 
+  b.data.date.getTime() - a.data.date.getTime()
+);
+
+// 필터링을 위한 고유 태그와 카테고리 추출
+const allTags = [...new Set(publishedPosts.flatMap(p => p.data.tags))].sort();
+const allCategories = [...new Set(publishedPosts.map(p => p.data.category))].sort();
+
+// 카테고리 표시명 매핑
+const categoryLabels = {
+  'development': '개발',
+  'design': '디자인',
+  'tutorial': '튜토리얼',
+  'thoughts': '생각',
+  'news': '소식',
+  'other': '기타'
+};
+
+// 페이지 정보
+const pageTitle = "개발 블로그 - 김개발 | React, JavaScript, 웹 개발 튜토리얼";
+const pageDescription = `${publishedPosts.length}개의 개발 블로그 포스트를 만나보세요. React, Vue.js, Node.js, TypeScript 튜토리얼과 웹 개발 경험담, 최신 기술 트렌드를 공유합니다. 프론트엔드, 백엔드 개발자를 위한 실용적인 가이드.`;
+
+// 읽기 시간 계산 함수 (단어 수 기반 추정)
+function estimateReadTime(content: string): number {
+  const wordsPerMinute = 200; // 평균 읽기 속도
+  const words = content.split(/\s+/).length;
+  return Math.ceil(words / wordsPerMinute);
+}
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  image="/favicon.svg"
+>
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-primary-900/20 dark:via-secondary-900 dark:to-secondary-800 py-20 overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="3" cy="3" r="3"/%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+    
+    <MainContent maxWidth="4xl" padding="lg" class="relative z-10">
+      <div class="text-center space-y-6">
+        <!-- 아이콘 -->
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-2xl mb-4">
+          <svg class="w-8 h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+        </div>
+        
+        <!-- 제목 -->
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary-900 dark:text-white">
+          웹 개발 기술 <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600 dark:from-primary-400 dark:to-secondary-400">블로그</span>
+        </h1>
+        
+        <!-- 설명 -->
+        <p class="text-lg md:text-xl text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto leading-relaxed">
+          개발 경험, 튜토리얼, 그리고 기술에 대한 생각들을 공유합니다. 
+          함께 배우고 성장하는 개발자가 되어보아요.
+        </p>
+        
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-2xl mx-auto mt-8">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+              {publishedPosts.length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              총 포스트
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-600">
+              {publishedPosts.filter(p => p.data.featured).length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              추천 글
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-600">
+              {allCategories.length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              카테고리
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-purple-600">
+              {allTags.length}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 text-sm">
+              태그
+            </div>
+          </div>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Filtering and Sorting Controls -->
+  <section class="py-8 bg-white dark:bg-secondary-900 border-b border-secondary-200 dark:border-secondary-700">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <!-- Filter Controls -->
+        <div class="flex flex-col sm:flex-row gap-4 flex-1">
+          <!-- Search Input -->
+          <div class="relative flex-1 max-w-md">
+            <input
+              type="text"
+              id="blog-search"
+              placeholder="포스트 검색..."
+              class="w-full px-4 py-2 pl-10 border border-secondary-300 dark:border-secondary-600 rounded-lg 
+                     bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white
+                     focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                     placeholder-secondary-500 dark:placeholder-secondary-400"
+            />
+            <svg class="absolute left-3 top-2.5 h-5 w-5 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+
+          <!-- Category Filter -->
+          <select
+            id="category-filter"
+            class="px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg 
+                   bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white
+                   focus:ring-2 focus:ring-primary-500 focus:border-transparent min-w-32"
+          >
+            <option value="">모든 카테고리</option>
+            {allCategories.map(category => (
+              <option value={category}>{categoryLabels[category] || category}</option>
+            ))}
+          </select>
+
+          <!-- Tag Filter -->
+          <select
+            id="tag-filter"
+            class="px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg 
+                   bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white
+                   focus:ring-2 focus:ring-primary-500 focus:border-transparent min-w-32"
+          >
+            <option value="">모든 태그</option>
+            {allTags.map(tag => (
+              <option value={tag}>{tag}</option>
+            ))}
+          </select>
+        </div>
+
+        <!-- Sort and Reset Controls -->
+        <div class="flex gap-3">
+          <!-- Sort Dropdown -->
+          <select
+            id="sort-posts"
+            class="px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg 
+                   bg-white dark:bg-secondary-800 text-secondary-900 dark:text-white
+                   focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="date-desc">최신순</option>
+            <option value="date-asc">오래된순</option>
+            <option value="title-asc">제목순 (A-Z)</option>
+            <option value="title-desc">제목순 (Z-A)</option>
+          </select>
+
+          <!-- Reset Button -->
+          <button
+            id="reset-filters"
+            class="px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg 
+                   bg-white dark:bg-secondary-800 text-secondary-700 dark:text-secondary-300
+                   hover:bg-secondary-50 dark:hover:bg-secondary-700 transition-colors"
+          >
+            초기화
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="mt-4">
+        <p id="results-count" class="text-sm text-secondary-600 dark:text-secondary-400">
+          {sortedPosts.length}개의 포스트
+        </p>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Blog Posts Grid -->
+  <section class="py-12 bg-secondary-50 dark:bg-secondary-800">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div id="posts-container" class="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+        {sortedPosts.map((post) => (
+          <article 
+            class="group bg-white dark:bg-secondary-900 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-secondary-200 dark:border-secondary-700"
+            data-title={post.data.title.toLowerCase()}
+            data-description={post.data.description.toLowerCase()}
+            data-category={post.data.category}
+            data-tags={post.data.tags.join(',')}
+            data-date={post.data.date.getTime()}
+          >
+            <!-- 이미지 -->
+            {post.data.image && (
+              <div class="relative overflow-hidden">
+                <img 
+                  src={post.data.image} 
+                  alt={post.data.imageAlt || post.data.title}
+                  class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                <!-- Featured Badge -->
+                {post.data.featured && (
+                  <div class="absolute top-4 left-4">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                      </svg>
+                      추천
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <!-- 콘텐츠 -->
+            <div class="p-6">
+              <!-- 메타데이터 -->
+              <div class="flex items-center justify-between text-sm text-secondary-500 dark:text-secondary-400 mb-3">
+                <div class="flex items-center space-x-4">
+                  <!-- 날짜 -->
+                  <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    {post.data.date.toLocaleDateString('ko-KR')}
+                  </span>
+                  
+                  <!-- 읽기 시간 -->
+                  {post.data.readTime && (
+                    <span class="flex items-center">
+                      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      {post.data.readTime}분
+                    </span>
+                  )}
+                </div>
+
+                <!-- 카테고리 -->
+                <span class="px-2 py-1 text-xs font-medium rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                  {categoryLabels[post.data.category] || post.data.category}
+                </span>
+              </div>
+
+              <!-- 제목 -->
+              <h3 class="text-xl font-bold text-secondary-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                <a href={`/blog/${post.slug}`} class="hover:underline">
+                  {post.data.title}
+                </a>
+              </h3>
+
+              <!-- 설명 -->
+              <p class="text-secondary-600 dark:text-secondary-300 mb-4 line-clamp-3">
+                {post.data.excerpt || post.data.description}
+              </p>
+
+              <!-- 태그 -->
+              {post.data.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2 mb-4">
+                  {post.data.tags.slice(0, 3).map(tag => (
+                    <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-700 text-secondary-600 dark:text-secondary-300 rounded-md">
+                      #{tag}
+                    </span>
+                  ))}
+                  {post.data.tags.length > 3 && (
+                    <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-700 text-secondary-500 dark:text-secondary-400 rounded-md">
+                      +{post.data.tags.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <!-- 액션 버튼 -->
+              <div class="flex items-center justify-between">
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  href={`/blog/${post.slug}`}
+                  class="flex-shrink-0"
+                >
+                  읽어보기
+                </Button>
+
+                <!-- 작성자 -->
+                <span class="text-sm text-secondary-500 dark:text-secondary-400">
+                  by {post.data.author}
+                </span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- No Results Message -->
+      <div id="no-results" class="text-center py-12 hidden">
+        <div class="text-secondary-400 dark:text-secondary-500 text-6xl mb-4">
+          📝
+        </div>
+        <h3 class="text-lg font-medium text-secondary-700 dark:text-secondary-300 mb-2">
+          검색 결과가 없습니다
+        </h3>
+        <p class="text-secondary-500 dark:text-secondary-400">
+          다른 키워드나 필터를 시도해보세요.
+        </p>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Related Projects Section -->
+  <section class="py-16 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-secondary-900 dark:text-white mb-4">
+          🚀 블로그 기술을 실제로 적용한 프로젝트들
+        </h2>
+        <p class="text-lg text-secondary-600 dark:text-secondary-400 max-w-3xl mx-auto">
+          블로그에서 다룬 React, Node.js, TypeScript 등의 기술들을 실제 프로젝트에서 어떻게 활용했는지 확인해보세요.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <!-- Web Development Project -->
+        <div class="bg-white dark:bg-secondary-900 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-secondary-200 dark:border-secondary-700 group">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-2xl">
+              💻
+            </div>
+            <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full font-medium">
+              Web App
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-secondary-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            웹 개발 프로젝트
+          </h3>
+          <p class="text-secondary-600 dark:text-secondary-400 mb-4 text-sm">
+            React, Next.js, TypeScript를 활용한 현대적인 웹 애플리케이션들을 포트폴리오에서 만나보세요.
+          </p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">React</span>
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">TypeScript</span>
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">Next.js</span>
+          </div>
+          <Button href="/projects" variant="ghost" size="sm" class="w-full group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20">
+            프로젝트 둘러보기 →
+          </Button>
+        </div>
+
+        <!-- Full Stack Project -->
+        <div class="bg-white dark:bg-secondary-900 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-secondary-200 dark:border-secondary-700 group">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white text-2xl">
+              🔧
+            </div>
+            <span class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full font-medium">
+              Full Stack
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-secondary-900 dark:text-white mb-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+            풀스택 솔루션
+          </h3>
+          <p class="text-secondary-600 dark:text-secondary-400 mb-4 text-sm">
+            Node.js, Express, PostgreSQL로 구축한 백엔드와 프론트엔드를 연결한 완전한 웹 서비스들입니다.
+          </p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">Node.js</span>
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">PostgreSQL</span>
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">API</span>
+          </div>
+          <Button href="/projects" variant="ghost" size="sm" class="w-full group-hover:bg-green-50 dark:group-hover:bg-green-900/20">
+            풀스택 프로젝트 보기 →
+          </Button>
+        </div>
+
+        <!-- Developer Profile -->
+        <div class="bg-white dark:bg-secondary-900 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-secondary-200 dark:border-secondary-700 group">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-2xl">
+              👨‍💻
+            </div>
+            <span class="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full font-medium">
+              Developer
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-secondary-900 dark:text-white mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+            개발자 소개
+          </h3>
+          <p class="text-secondary-600 dark:text-secondary-400 mb-4 text-sm">
+            5년 경력 풀스택 개발자의 기술 스택, 개발 철학, 그리고 성장 여정을 자세히 알아보세요.
+          </p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">5년 경력</span>
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">풀스택</span>
+            <span class="text-xs px-2 py-1 bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 rounded">Seoul</span>
+          </div>
+          <Button href="/about" variant="ghost" size="sm" class="w-full group-hover:bg-purple-50 dark:group-hover:bg-purple-900/20">
+            개발자 소개 보기 →
+          </Button>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="text-center">
+        <div class="inline-flex items-center space-x-2 text-secondary-600 dark:text-secondary-400 mb-6">
+          <span class="text-2xl">🤝</span>
+          <span class="text-lg">함께 프로젝트를 만들어보고 싶으신가요?</span>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button href="/contact" variant="primary" size="lg" class="inline-flex items-center">
+            기술 상담 및 협업 문의하기
+            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </Button>
+          <Button href="/projects" variant="outline" size="lg" class="inline-flex items-center">
+            전체 포트폴리오 둘러보기
+            <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </Button>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-16 bg-gradient-to-r from-primary-600 to-secondary-600 dark:from-primary-700 dark:to-secondary-700">
+    <MainContent maxWidth="4xl" padding="lg">
+      <div class="text-center text-white">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          더 많은 콘텐츠가 준비 중입니다
+        </h2>
+        <p class="text-xl text-primary-100 dark:text-primary-200 mb-8 max-w-2xl mx-auto">
+          개발 팁, 튜토리얼, 프로젝트 후기 등 다양한 글들을 정기적으로 업데이트하고 있습니다.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button 
+            variant="secondary" 
+            href="/projects"
+            class="bg-white text-primary-600 hover:bg-primary-50"
+          >
+            React/Node.js 프로젝트 포트폴리오 보기
+          </Button>
+          <Button 
+            variant="outline" 
+            href="/contact"
+            class="border-white text-white hover:bg-white hover:text-primary-600"
+          >
+            기술 상담 및 협업 문의하기
+          </Button>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+</Layout>
+
+<script>
+  // 블로그 포스트 데이터를 전역으로 저장
+  const postsData = [
+    ...Array.from(document.querySelectorAll('[data-title]')).map(el => ({
+      element: el as HTMLElement,
+      title: el.getAttribute('data-title') || '',
+      description: el.getAttribute('data-description') || '',
+      category: el.getAttribute('data-category') || '',
+      tags: el.getAttribute('data-tags')?.split(',').filter(Boolean) || [],
+      date: new Date(parseInt(el.getAttribute('data-date') || '0'))
+    }))
+  ];
+
+  let filteredPosts = [...postsData];
+
+  // DOM 요소들
+  const searchInput = document.getElementById('blog-search') as HTMLInputElement;
+  const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement;
+  const tagFilter = document.getElementById('tag-filter') as HTMLSelectElement;
+  const sortSelect = document.getElementById('sort-posts') as HTMLSelectElement;
+  const resetButton = document.getElementById('reset-filters') as HTMLButtonElement;
+  const resultsCount = document.getElementById('results-count') as HTMLElement;
+  const postsContainer = document.getElementById('posts-container') as HTMLElement;
+  const noResults = document.getElementById('no-results') as HTMLElement;
+
+  // 필터링 함수
+  function filterPosts() {
+    const searchTerm = searchInput?.value.toLowerCase() || '';
+    const selectedCategory = categoryFilter?.value || '';
+    const selectedTag = tagFilter?.value || '';
+
+    filteredPosts = postsData.filter(post => {
+      const matchesSearch = !searchTerm || 
+        post.title.includes(searchTerm) || 
+        post.description.includes(searchTerm);
+      
+      const matchesCategory = !selectedCategory || post.category === selectedCategory;
+      const matchesTag = !selectedTag || post.tags.includes(selectedTag);
+
+      return matchesSearch && matchesCategory && matchesTag;
+    });
+
+    sortPosts();
+    updateDisplay();
+  }
+
+  // 정렬 함수
+  function sortPosts() {
+    const sortBy = sortSelect?.value || 'date-desc';
+    
+    filteredPosts.sort((a, b) => {
+      switch (sortBy) {
+        case 'date-desc':
+          return b.date.getTime() - a.date.getTime();
+        case 'date-asc':
+          return a.date.getTime() - b.date.getTime();
+        case 'title-asc':
+          return a.title.localeCompare(b.title);
+        case 'title-desc':
+          return b.title.localeCompare(a.title);
+        default:
+          return 0;
+      }
+    });
+  }
+
+  // 화면 업데이트 함수
+  function updateDisplay() {
+    // 모든 포스트 숨기기
+    postsData.forEach(post => {
+      (post.element as HTMLElement).style.display = 'none';
+    });
+
+    // 필터된 포스트만 표시
+    filteredPosts.forEach((post, index) => {
+      (post.element as HTMLElement).style.display = 'block';
+      (post.element as HTMLElement).style.order = index.toString();
+    });
+
+    // 결과 개수 업데이트
+    if (resultsCount) {
+      resultsCount.textContent = `${filteredPosts.length}개의 포스트`;
+    }
+
+    // 결과 없음 메시지 표시/숨김
+    if (noResults && postsContainer) {
+      if (filteredPosts.length === 0) {
+        noResults.classList.remove('hidden');
+        postsContainer.classList.add('hidden');
+      } else {
+        noResults.classList.add('hidden');
+        postsContainer.classList.remove('hidden');
+      }
+    }
+  }
+
+  // 필터 초기화 함수
+  function resetFilters() {
+    if (searchInput) searchInput.value = '';
+    if (categoryFilter) categoryFilter.value = '';
+    if (tagFilter) tagFilter.value = '';
+    if (sortSelect) sortSelect.value = 'date-desc';
+    filterPosts();
+  }
+
+  // 이벤트 리스너 등록
+  searchInput?.addEventListener('input', filterPosts);
+  categoryFilter?.addEventListener('change', filterPosts);
+  tagFilter?.addEventListener('change', filterPosts);
+  sortSelect?.addEventListener('change', filterPosts);
+  resetButton?.addEventListener('click', resetFilters);
+
+  // 스크롤 애니메이션
+  document.addEventListener('DOMContentLoaded', () => {
+    const articles = document.querySelectorAll('article');
+    
+    // 초기 애니메이션
+    articles.forEach((article, index) => {
+      setTimeout(() => {
+        (article as HTMLElement).style.opacity = '1';
+        (article as HTMLElement).style.transform = 'translateY(0)';
+      }, index * 100);
+    });
+    
+    // 스크롤 애니메이션 옵저버
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    articles.forEach(article => {
+      (article as HTMLElement).style.opacity = '0';
+      (article as HTMLElement).style.transform = 'translateY(20px)';
+      (article as HTMLElement).style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(article);
+    });
+  });
+</script>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  article.visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+</style>

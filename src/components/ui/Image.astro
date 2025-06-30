@@ -1,0 +1,231 @@
+import type { ImageProps } from '../../types/components';
+import { Image as AstroImage } from 'astro:assets';
+
+interface Props extends ImageProps {
+  format?: 'webp' | 'avif' | 'png' | 'jpeg';
+  quality?: number;
+  priority?: boolean;
+}
+
+const { 
+  src, 
+  alt, 
+  width, 
+  height, 
+  lazy = true, 
+  rounded = false, 
+  class: className = '',
+  aspectRatio = 'auto',
+  objectFit = 'cover',
+  placeholder = true,
+  format = 'webp',
+  quality = 80,
+  priority = false,
+  ...rest 
+} = Astro.props;
+
+// 기본 스타일
+const baseStyles = 'transition-all duration-300';
+
+// 둥근 모서리 스타일
+const roundedStyles = {
+  false: '',
+  true: 'rounded-lg',
+  sm: 'rounded',
+  md: 'rounded-md', 
+  lg: 'rounded-lg',
+  xl: 'rounded-xl',
+  full: 'rounded-full'
+};
+
+// 종횡비 스타일
+const aspectRatioStyles = {
+  auto: '',
+  square: 'aspect-square',
+  video: 'aspect-video',
+  portrait: 'aspect-[3/4]',
+  landscape: 'aspect-[4/3]'
+};
+
+// 객체 맞춤 스타일
+const objectFitStyles = {
+  cover: 'object-cover',
+  contain: 'object-contain',
+  fill: 'object-fill',
+  none: 'object-none',
+  scale: 'object-scale-down'
+};
+
+// 최종 클래스 조합
+const imageClasses = [
+  baseStyles,
+  roundedStyles[rounded as keyof typeof roundedStyles] || roundedStyles[false],
+  aspectRatioStyles[aspectRatio],
+  objectFitStyles[objectFit],
+  className
+].filter(Boolean).join(' ');
+
+// 플레이스홀더 생성을 위한 데이터 URL
+const placeholderDataUrl = `data:image/svg+xml;base64,${btoa(`
+  <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="#f3f4f6"/>
+    <rect x="50%" y="50%" width="50" height="40" fill="#d1d5db" transform="translate(-25,-20)"/>
+    <circle cx="35%" cy="35%" r="8" fill="#d1d5db"/>
+    <path d="M20 60 L40 40 L60 60 L80 40 L100 60" stroke="#d1d5db" stroke-width="2" fill="none"/>
+    <text x="50%" y="80%" text-anchor="middle" fill="#9ca3af" font-family="system-ui" font-size="12">
+      이미지 로딩 중...
+    </text>
+  </svg>
+`)}`;
+
+// 이미지 소스가 문자열인지 확인 (외부 URL vs. 로컬 asset)
+const isExternalUrl = typeof src === 'string' && (src.startsWith('http') || src.startsWith('//'));
+const isLocalAsset = typeof src !== 'string'; // Astro asset object
+
+// 로딩 속성 설정 (우선순위 이미지는 즉시 로딩)
+const loadingAttr = priority ? 'eager' : (lazy ? 'lazy' : 'eager');
+
+// 반응형 이미지를 위한 크기 배열 생성
+const responsiveWidths = width ? [
+  Math.round(width * 0.5), // 모바일용 50%
+  Math.round(width * 0.75), // 태블릿용 75%
+  width // 데스크탑용 원본 크기
+].filter(w => w > 0) : undefined;
+
+// 우선순위 이미지의 미리 로딩
+{priority && isLocalAsset && (
+  <link 
+    rel="preload" 
+    as="image" 
+    href={src.src}
+    type={`image/${format}`}
+  />
+)}
+
+{isLocalAsset ? (
+  <!-- 로컬 Astro Asset 사용 (최적화됨) -->
+  <AstroImage
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    format={format}
+    quality={quality}
+    class={imageClasses}
+    loading={loadingAttr}
+    {...(responsiveWidths && { widths: responsiveWidths })}
+    {...rest}
+  />
+) : (
+  <!-- 외부 URL 사용 -->
+  <div class={`relative overflow-hidden ${aspectRatioStyles[aspectRatio]} ${roundedStyles[rounded as keyof typeof roundedStyles] || ''}`}>
+    {placeholder && (
+      <img
+        src={placeholderDataUrl}
+        alt=""
+        class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${imageClasses}`}
+        aria-hidden="true"
+        data-placeholder="true"
+      />
+    )}
+    
+    <img
+      src={src as string}
+      alt={alt}
+      width={width}
+      height={height}
+      class={`relative z-10 w-full h-full ${imageClasses}`}
+      loading={loadingAttr}
+      onload="this.parentElement.querySelector('[data-placeholder]')?.style.setProperty('opacity', '0')"
+      onerror="this.style.display='none'; this.parentElement.querySelector('[data-placeholder]')?.style.setProperty('opacity', '1')"
+      {...rest}
+    />
+  </div>
+)}
+
+<style>
+  /* 이미지 로딩 애니메이션 */
+  .image-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  :global(.dark) .image-loading {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 200% 100%;
+  }
+  
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  
+  /* 지연 로딩 이미지 페이드인 효과 */
+  img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  img[loading="lazy"].loaded {
+    opacity: 1;
+  }
+  
+  /* 호버 효과 */
+  .image-hover:hover {
+    transform: scale(1.05);
+  }
+  
+  /* 포커스 효과 */
+  .image-focusable:focus {
+    outline: 2px solid theme('colors.primary.500');
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // 지연 로딩 이미지 페이드인 처리
+  document.addEventListener('DOMContentLoaded', () => {
+    const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+    
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target as HTMLImageElement;
+            
+            img.addEventListener('load', () => {
+              img.classList.add('loaded');
+            });
+            
+            if (img.complete) {
+              img.classList.add('loaded');
+            }
+            
+            imageObserver.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '50px 0px',
+        threshold: 0.1
+      });
+      
+      lazyImages.forEach(img => imageObserver.observe(img));
+    } else {
+      // IntersectionObserver를 지원하지 않는 경우 즉시 로딩
+      lazyImages.forEach(img => {
+        (img as HTMLImageElement).addEventListener('load', () => {
+          (img as HTMLImageElement).classList.add('loaded');
+        });
+        
+        if ((img as HTMLImageElement).complete) {
+          (img as HTMLImageElement).classList.add('loaded');
+        }
+      });
+    }
+  });
+</script> 

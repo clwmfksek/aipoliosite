@@ -1,0 +1,143 @@
+---
+import ThemeToggle from '../features/ThemeToggle.astro';
+
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+  { href: '/', label: '홈' },
+  { href: '/about', label: '소개' },
+  { href: '/projects', label: '프로젝트' },
+  { href: '/blog', label: '블로그' },
+  { href: '/contact', label: '연락처' },
+];
+---
+
+<header 
+  class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700"
+  role="banner"
+  aria-label="메인 내비게이션"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- 로고/이름 -->
+      <div class="flex-shrink-0">
+        <a href="/" class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-sm">P</span>
+          </div>
+          <span class="font-bold text-xl text-gray-900 dark:text-white">포트폴리오</span>
+        </a>
+      </div>
+
+      <!-- 데스크톱 내비게이션 -->
+      <nav class="hidden md:flex items-center space-x-8">
+        {navItems.map((item) => (
+          <a
+            href={item.href}
+            class={`text-sm font-medium transition-colors duration-200 ${
+              currentPath === item.href
+                ? 'text-blue-600 dark:text-blue-400'
+                : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+            }`}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- 테마 토글 & 모바일 메뉴 버튼 -->
+      <div class="flex items-center space-x-4">
+        <ThemeToggle />
+        
+        <!-- 모바일 메뉴 버튼 -->
+        <button
+          id="mobile-menu-button"
+          type="button"
+          class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          aria-label="메뉴 열기"
+        >
+          <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 모바일 메뉴 -->
+  <div class="md:hidden" id="mobile-menu" style="display: none;">
+    <div class="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+            currentPath === item.href
+              ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+              : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+          }`}
+        >
+          {item.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  // 모바일 메뉴 토글 기능
+  document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+    const openIcon = button?.querySelector('svg:first-child');
+    const closeIcon = button?.querySelector('svg:last-child');
+
+    if (!button || !menu || !openIcon || !closeIcon) return;
+
+    button.addEventListener('click', () => {
+      const isOpen = menu.style.display !== 'none';
+      
+      if (isOpen) {
+        menu.style.display = 'none';
+        openIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+        button.setAttribute('aria-label', '메뉴 열기');
+      } else {
+        menu.style.display = 'block';
+        openIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        button.setAttribute('aria-expanded', 'true');
+        button.setAttribute('aria-label', '메뉴 닫기');
+      }
+    });
+
+    // 외부 클릭 시 메뉴 닫기
+    document.addEventListener('click', (event) => {
+      const target = event.target as Element;
+      if (!button.contains(target) && !menu.contains(target)) {
+        menu.style.display = 'none';
+        openIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+        button.setAttribute('aria-label', '메뉴 열기');
+      }
+    });
+
+    // 모바일 메뉴 링크 클릭 시 메뉴 닫기
+    const mobileLinks = menu.querySelectorAll('a');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menu.style.display = 'none';
+        openIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+        button.setAttribute('aria-label', '메뉴 열기');
+      });
+    });
+  });
+</script> 

@@ -1,0 +1,13 @@
+{
+  "name": "Tailwind CSS",
+  "category": "frontend",
+  "level": "intermediate",
+  "experience": 2,
+  "icon": "🎨",
+  "color": "#06B6D4",
+  "description": "유틸리티 우선 CSS 프레임워크",
+  "certifications": [],
+  "projects": ["portfolio-website"],
+  "featured": true,
+  "order": 3
+} 

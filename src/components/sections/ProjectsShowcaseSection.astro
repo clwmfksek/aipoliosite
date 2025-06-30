@@ -1,0 +1,397 @@
+---
+import Card from '../ui/Card.astro';
+import Button from '../ui/Button.astro';
+import Tag from '../ui/Tag.astro';
+import { Image } from 'astro:assets';
+
+export interface ProjectItem {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  category: string;
+  status: 'completed' | 'in-progress' | 'planned';
+  featured: boolean;
+  liveUrl?: string;
+  githubUrl?: string;
+}
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  projects?: ProjectItem[];
+  showAll?: boolean;
+  maxItems?: number;
+  enableFiltering?: boolean;
+  class?: string;
+}
+
+const {
+  title = "웹 개발 프로젝트 포트폴리오",
+  subtitle = "React & Node.js Projects",
+  description = "React, Vue.js, Node.js, TypeScript를 활용해 개발한 다양한 웹 애플리케이션 프로젝트들을 만나보세요. 각 프로젝트는 고유한 기술적 도전과 실무 학습 경험이었습니다.",
+  projects = [],
+  showAll = false,
+  maxItems = 6,
+  enableFiltering = true,
+  class: className = "",
+} = Astro.props;
+
+// Sample projects data (to be replaced with real data from content collections)
+const sampleProjects: ProjectItem[] = [
+  {
+    id: "1",
+    title: "E-커머스 플랫폼",
+    description: "React, Node.js, MongoDB를 사용하여 구축한 현대적인 전자상거래 플랫폼입니다. 사용자 인증, 결제 시스템, 관리자 대시보드를 포함합니다.",
+    image: "/images/projects/ecommerce.jpg",
+    technologies: ["React", "Node.js", "MongoDB", "Stripe", "Tailwind CSS"],
+    category: "웹 개발",
+    status: "completed",
+    featured: true,
+    liveUrl: "https://example.com",
+    githubUrl: "https://github.com"
+  },
+  {
+    id: "2",
+    title: "AI 챗봇 애플리케이션",
+    description: "OpenAI API를 활용한 지능형 고객 서비스 챗봇입니다. 자연어 처리와 맥락 이해를 통해 사용자와 자연스러운 대화를 제공합니다.",
+    image: "/images/projects/chatbot.jpg",
+    technologies: ["Python", "FastAPI", "OpenAI API", "React", "WebSocket"],
+    category: "AI/ML",
+    status: "in-progress",
+    featured: true,
+    githubUrl: "https://github.com"
+  },
+  {
+    id: "3",
+    title: "모바일 피트니스 앱",
+    description: "React Native로 개발한 크로스 플랫폼 피트니스 추적 애플리케이션입니다. 운동 계획, 진행도 추적, 소셜 기능을 제공합니다.",
+    image: "/images/projects/fitness.jpg",
+    technologies: ["React Native", "Firebase", "Redux", "Expo"],
+    category: "모바일",
+    status: "completed",
+    featured: false,
+    liveUrl: "https://example.com",
+    githubUrl: "https://github.com"
+  },
+  {
+    id: "4",
+    title: "데이터 시각화 대시보드",
+    description: "D3.js와 Vue.js를 사용하여 구축한 인터랙티브 데이터 분석 대시보드입니다. 실시간 데이터 처리와 동적 차트를 제공합니다.",
+    image: "/images/projects/dashboard.jpg",
+    technologies: ["Vue.js", "D3.js", "Python", "PostgreSQL", "Docker"],
+    category: "데이터",
+    status: "completed",
+    featured: true,
+    liveUrl: "https://example.com"
+  },
+  {
+    id: "5",
+    title: "블로그 플랫폼",
+    description: "Next.js와 Contentful을 사용한 현대적인 블로그 플랫폼입니다. SEO 최적화, 다크 모드, 댓글 시스템을 포함합니다.",
+    image: "/images/projects/blog.jpg",
+    technologies: ["Next.js", "Contentful", "Vercel", "TypeScript"],
+    category: "웹 개발",
+    status: "completed",
+    featured: false,
+    liveUrl: "https://example.com",
+    githubUrl: "https://github.com"
+  },
+  {
+    id: "6",
+    title: "IoT 홈 자동화",
+    description: "Arduino와 Raspberry Pi를 활용한 스마트 홈 시스템입니다. 센서 데이터 수집, 원격 제어, 모바일 앱을 통한 관리가 가능합니다.",
+    image: "/images/projects/iot.jpg",
+    technologies: ["Arduino", "Raspberry Pi", "Python", "MQTT", "React Native"],
+    category: "IoT",
+    status: "planned",
+    featured: true
+  }
+];
+
+const displayProjects = projects.length > 0 ? projects : sampleProjects;
+const featuredProjects = displayProjects.filter(project => project.featured);
+const projectsToShow = showAll ? displayProjects : featuredProjects.slice(0, maxItems);
+
+// Get unique categories for filtering
+const categories = [...new Set(displayProjects.map(project => project.category))];
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'completed': return 'green';
+    case 'in-progress': return 'blue';
+    case 'planned': return 'yellow';
+    default: return 'gray';
+  }
+};
+
+const getStatusText = (status: string) => {
+  switch (status) {
+    case 'completed': return '완료';
+    case 'in-progress': return '진행중';
+    case 'planned': return '계획됨';
+    default: return status;
+  }
+};
+---
+
+<section 
+  class={`py-20 bg-white dark:bg-gray-900 ${className}`}
+  aria-label="프로젝트 포트폴리오 섹션"
+  role="region"
+  tabindex="-1"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <div class="inline-block">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          {title}
+          <span class="block text-lg sm:text-xl font-normal text-blue-600 dark:text-blue-400 mt-2">
+            {subtitle}
+          </span>
+        </h2>
+      </div>
+      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+        {description}
+      </p>
+    </div>
+
+    <!-- Filter Buttons (Client-side) -->
+    {enableFiltering && (
+      <div class="flex flex-wrap justify-center gap-3 mb-12" role="group" aria-label="프로젝트 카테고리 필터">
+        <button 
+          class="filter-btn active px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 bg-blue-600 text-white hover:bg-blue-700"
+          data-category="all"
+          aria-pressed="true"
+          aria-label="전체 프로젝트 보기"
+        >
+          전체
+        </button>
+        {categories.map(category => (
+          <button 
+            class="filter-btn px-6 py-3 rounded-full text-sm font-medium transition-all duration-200 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+            data-category={category}
+            aria-pressed="false"
+            aria-label={`${category} 카테고리 프로젝트 보기`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+    )}
+
+    <!-- Projects Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12" id="projects-grid" role="list" aria-label="프로젝트 목록">
+      {projectsToShow.map((project) => (
+        <div class="project-card group" data-category={project.category} role="listitem">
+          <Card 
+            variant="elevated"
+            class="h-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <!-- Project Image -->
+            <div class="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
+              <!-- Placeholder for project image -->
+              <div class="w-full h-full flex items-center justify-center">
+                <svg 
+                  class="w-16 h-16 text-gray-400 dark:text-gray-600" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  role="img"
+                  aria-label={`${project.title} 프로젝트 이미지 플레이스홀더`}
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="sr-only">{project.title} 프로젝트 대표 이미지</span>
+              </div>
+              
+              <!-- Status Badge -->
+              <div class="absolute top-4 right-4">
+                <Tag 
+                  variant="filled" 
+                  color={getStatusColor(project.status)}
+                  size="sm"
+                  aria-label={`프로젝트 상태: ${getStatusText(project.status)}`}
+                >
+                  {getStatusText(project.status)}
+                </Tag>
+              </div>
+
+              <!-- Overlay on Hover -->
+              <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-4">
+                {project.liveUrl && (
+                  <a 
+                    href={project.liveUrl}
+                    class="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
+                    aria-label="라이브 사이트 보기"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                )}
+                {project.githubUrl && (
+                  <a 
+                    href={project.githubUrl}
+                    class="p-3 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors"
+                    aria-label="GitHub 저장소 보기"
+                  >
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <!-- Project Content -->
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {project.title}
+              </h3>
+              
+              <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                {project.description}
+              </p>
+
+              <!-- Technologies -->
+              <div class="flex flex-wrap gap-2 mb-4">
+                {project.technologies.slice(0, 4).map(tech => (
+                  <Tag variant="outline" size="sm" color="blue">
+                    {tech}
+                  </Tag>
+                ))}
+                {project.technologies.length > 4 && (
+                  <Tag variant="ghost" size="sm" color="gray">
+                    +{project.technologies.length - 4}
+                  </Tag>
+                )}
+              </div>
+
+              <!-- Links -->
+              <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-sm text-gray-500 dark:text-gray-400">
+                  {project.category}
+                </span>
+                <div class="flex space-x-2">
+                  {project.liveUrl && (
+                    <a 
+                      href={project.liveUrl}
+                      class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                      aria-label="라이브 사이트"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a 
+                      href={project.githubUrl}
+                      class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                      aria-label="GitHub"
+                    >
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      ))}
+    </div>
+
+    <!-- View All Button -->
+    {!showAll && (
+      <div class="text-center">
+        <Button 
+          href="/projects"
+          variant="outline"
+          size="lg"
+          class="inline-flex items-center px-8 py-4 text-lg font-medium"
+        >
+          모든 프로젝트 보기
+          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </Button>
+      </div>
+    )}
+  </div>
+</section>
+
+<!-- Client-side filtering script -->
+{enableFiltering && (
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const projectCards = document.querySelectorAll('.project-card');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const category = this.getAttribute('data-category');
+          
+          // Update active button
+          filterBtns.forEach(b => {
+            b.classList.remove('active', 'bg-blue-600', 'text-white');
+            b.classList.add('bg-gray-100', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
+          });
+          
+          this.classList.add('active', 'bg-blue-600', 'text-white');
+          this.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
+
+          // Filter projects
+          projectCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            
+            if (category === 'all' || cardCategory === category) {
+              card.style.display = 'block';
+              card.style.animation = 'fadeIn 0.5s ease-in-out';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+
+    // Add fadeIn keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+)}
+
+<style>
+  /* Additional responsive grid adjustments */
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (min-width: 640px) and (max-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style> 

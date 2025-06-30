@@ -1,0 +1,334 @@
+---
+// 향상된 테마 토글 컴포넌트 - 다크/라이트 모드 전환
+import type { ThemeToggleProps } from '../../types/components';
+
+interface Props extends ThemeToggleProps {}
+
+const { 
+  size = 'md', 
+  showLabel = false, 
+  class: className = '',
+  ...rest 
+} = Astro.props;
+
+// 크기별 스타일
+const sizeStyles = {
+  sm: 'w-8 h-8 p-1',
+  md: 'w-10 h-10 p-2',
+  lg: 'w-12 h-12 p-3'
+};
+
+// 아이콘 크기
+const iconSizes = {
+  sm: 'w-4 h-4',
+  md: 'w-6 h-6',
+  lg: 'w-8 h-8'
+};
+
+const classes = [
+  'theme-toggle relative inline-flex items-center justify-center rounded-lg',
+  'border border-secondary-200 dark:border-secondary-700',
+  'bg-white dark:bg-secondary-800',
+  'hover:bg-secondary-50 dark:hover:bg-secondary-700',
+  'transition-all duration-200',
+  'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-secondary-800',
+  sizeStyles[size],
+  className
+].filter(Boolean).join(' ');
+---
+
+<div class={showLabel ? 'flex items-center gap-2' : ''}>
+  <button
+    id="theme-toggle"
+    type="button"
+    class={classes}
+    aria-label="테마 전환"
+    title="다크/라이트 모드 전환"
+    {...rest}
+  >
+    <!-- 태양 아이콘 (라이트 모드용) -->
+    <svg
+      class={`sun-icon absolute ${iconSizes[size]} text-yellow-500 transition-all duration-300 scale-100 opacity-100 dark:scale-0 dark:opacity-0`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+      ></path>
+    </svg>
+
+    <!-- 달 아이콘 (다크 모드용) -->
+    <svg
+      class={`moon-icon absolute ${iconSizes[size]} text-blue-400 transition-all duration-300 scale-0 opacity-0 dark:scale-100 dark:opacity-100`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+      ></path>
+    </svg>
+
+    <!-- 로딩 스피너 (테마 전환 중) -->
+    <svg
+      class={`loading-icon absolute ${iconSizes[size]} text-primary-500 transition-all duration-300 scale-0 opacity-0 animate-spin`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      ></circle>
+      <path
+        class="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      ></path>
+    </svg>
+  </button>
+  
+  {showLabel && (
+    <span class="text-sm font-medium text-secondary-700 dark:text-secondary-300">
+      <span class="dark:hidden">라이트</span>
+      <span class="hidden dark:inline">다크</span>
+    </span>
+  )}
+</div>
+
+<script>
+  // 향상된 테마 토글 기능
+  function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement;
+    if (!themeToggle) return;
+
+    // 접근성을 위한 키보드 지원
+    themeToggle.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        themeToggle.click();
+      }
+    });
+
+    // 토글 버튼 클릭 이벤트
+    themeToggle.addEventListener('click', async () => {
+      // 로딩 상태 표시
+      showLoadingState(themeToggle);
+
+      try {
+        // 테마 전환
+        const newTheme = (window as any).themeManager?.toggleTheme();
+        
+        // 짧은 지연 후 로딩 상태 해제 (시각적 피드백)
+        setTimeout(() => {
+          hideLoadingState(themeToggle);
+          
+          // 성공 피드백
+          if (newTheme) {
+            showSuccessFeedback(themeToggle, newTheme);
+          }
+        }, 150);
+
+        // 분석을 위한 이벤트 트래킹 (선택적)
+        if (typeof (window as any).gtag !== 'undefined') {
+          (window as any).gtag('event', 'theme_toggle', {
+            event_category: 'UI',
+            event_label: newTheme,
+            value: 1
+          });
+        }
+
+      } catch (error) {
+        console.error('테마 전환 중 오류 발생:', error);
+        hideLoadingState(themeToggle);
+        
+        // 오류 피드백
+        showErrorFeedback(themeToggle);
+      }
+    });
+
+    // 테마 변경 이벤트 리스너
+    document.addEventListener('themechange', (e: any) => {
+      updateToggleIcon(themeToggle, e.detail.theme);
+    });
+
+    // 초기 아이콘 상태 설정
+    if ((window as any).themeManager) {
+      const currentTheme = (window as any).themeManager.getCurrentTheme();
+      updateToggleIcon(themeToggle, currentTheme);
+    }
+  }
+
+  // 로딩 상태 표시
+  function showLoadingState(button: HTMLButtonElement) {
+    const sunIcon = button.querySelector('.sun-icon') as SVGElement;
+    const moonIcon = button.querySelector('.moon-icon') as SVGElement;
+    const loadingIcon = button.querySelector('.loading-icon') as SVGElement;
+    
+    if (sunIcon) {
+      sunIcon.style.transform = 'scale(0)';
+      sunIcon.style.opacity = '0';
+    }
+    if (moonIcon) {
+      moonIcon.style.transform = 'scale(0)';
+      moonIcon.style.opacity = '0';
+    }
+    if (loadingIcon) {
+      loadingIcon.style.transform = 'scale(1)';
+      loadingIcon.style.opacity = '1';
+    }
+    
+    button.disabled = true;
+  }
+
+  // 로딩 상태 해제
+  function hideLoadingState(button: HTMLButtonElement) {
+    const loadingIcon = button.querySelector('.loading-icon') as SVGElement;
+    if (loadingIcon) {
+      loadingIcon.style.transform = 'scale(0)';
+      loadingIcon.style.opacity = '0';
+    }
+    
+    button.disabled = false;
+  }
+
+  // 토글 아이콘 업데이트
+  function updateToggleIcon(button: HTMLButtonElement, theme: string) {
+    const sunIcon = button.querySelector('.sun-icon') as SVGElement;
+    const moonIcon = button.querySelector('.moon-icon') as SVGElement;
+    
+    if (theme === 'dark') {
+      if (sunIcon) {
+        sunIcon.style.transform = 'scale(0)';
+        sunIcon.style.opacity = '0';
+      }
+      if (moonIcon) {
+        moonIcon.style.transform = 'scale(1)';
+        moonIcon.style.opacity = '1';
+      }
+    } else {
+      if (sunIcon) {
+        sunIcon.style.transform = 'scale(1)';
+        sunIcon.style.opacity = '1';
+      }
+      if (moonIcon) {
+        moonIcon.style.transform = 'scale(0)';
+        moonIcon.style.opacity = '0';
+      }
+    }
+  }
+
+  // 성공 피드백
+  function showSuccessFeedback(button: HTMLButtonElement, theme: string) {
+    // 버튼에 짧은 성공 애니메이션 추가
+    button.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+      button.style.transform = 'scale(1)';
+    }, 100);
+
+    // 툴팁 업데이트
+    const newTitle = theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환';
+    button.setAttribute('title', newTitle);
+  }
+
+  // 오류 피드백
+  function showErrorFeedback(button: HTMLButtonElement) {
+    button.style.borderColor = '#ef4444';
+    setTimeout(() => {
+      button.style.borderColor = '';
+    }, 1000);
+  }
+
+  // DOM 로드 완료 시 초기화
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThemeToggle);
+  } else {
+    initThemeToggle();
+  }
+
+  // 페이지 전환 시에도 재초기화 (SPA 방식 지원)
+  document.addEventListener('astro:page-load', initThemeToggle);
+</script>
+
+<style>
+  .theme-toggle {
+    /* GPU 가속으로 성능 최적화 */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    
+    /* 부드러운 호버 효과 */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .theme-toggle:hover {
+    transform: translateY(-1px) translateZ(0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .theme-toggle:active {
+    transform: translateY(0) translateZ(0);
+  }
+
+  /* 다크 모드에서 호버 효과 조정 */
+  .dark .theme-toggle:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 접근성: 포커스 상태 강화 */
+  .theme-toggle:focus-visible {
+    ring-offset-color: var(--color-bg-primary);
+  }
+
+  /* 아이콘 애니메이션 최적화 */
+  .sun-icon,
+  .moon-icon,
+  .loading-icon {
+    will-change: transform, opacity;
+  }
+
+  /* 모바일에서 터치 피드백 개선 */
+  @media (hover: none) {
+    .theme-toggle:hover {
+      transform: translateZ(0);
+      box-shadow: none;
+    }
+    
+    .theme-toggle:active {
+      transform: scale(0.95) translateZ(0);
+    }
+  }
+
+  /* 고대비 모드 지원 */
+  @media (prefers-contrast: high) {
+    .theme-toggle {
+      border-width: 2px;
+    }
+  }
+
+  /* 애니메이션 감소 선호도 지원 */
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle,
+    .sun-icon,
+    .moon-icon,
+    .loading-icon {
+      transition: none;
+    }
+    
+    .loading-icon {
+      animation: none;
+    }
+  }
+</style> 

@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://portfolio.example.com/sitemap-index.xml
+
+# Crawl delay (optional, in seconds)
+Crawl-delay: 1
+
+# Disallow certain paths if needed
+# Disallow: /private/
+# Disallow: /admin/
+
+# Allow all image files
+Allow: *.jpg$
+Allow: *.jpeg$
+Allow: *.png$
+Allow: *.gif$
+Allow: *.webp$
+Allow: *.svg$
+
+# Allow CSS and JS files
+Allow: *.css$
+Allow: *.js$
+
+# Block access to specific file types
+Disallow: *.pdf$
+Disallow: *.doc$
+Disallow: *.docx$ 

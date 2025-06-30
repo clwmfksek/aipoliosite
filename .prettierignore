@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.astro/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Coverage
+coverage/
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+sitemap*.xml
+robots.txt
+
+# Compressed files
+*.gz
+*.br
+
+# Public assets that shouldn't be formatted
+public/icons/
+public/images/
+public/assets/
+
+# Configuration files that have specific formatting
+.lighthouserc.json
+vercel.json 

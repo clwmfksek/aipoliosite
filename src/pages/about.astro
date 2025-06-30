@@ -1,0 +1,553 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MainContent from '../components/layout/MainContent.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import Badge from '../components/ui/Badge.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
+
+// About 페이지 기본 데이터
+const personalInfo = {
+  name: "김개발 - 5년 경력 풀스택 웹 개발자",
+  title: "React • Node.js • TypeScript 전문가",
+  location: "서울, 대한민국",
+  email: "developer@example.com",
+  bio: `안녕하세요! 저는 5년 경력의 풀스택 웹 개발자입니다. 
+사용자 중심의 웹 애플리케이션을 설계하고 구현하는 것을 좋아하며, 
+최신 기술을 활용해 효율적이고 확장 가능한 솔루션을 제공합니다.`,
+  image: "/images/profile.jpg",
+  languages: ["한국어 (모국어)", "영어 (비즈니스 수준)", "일본어 (기초 회화)"],
+  interests: ["오픈소스 기여", "기술 블로깅", "사진 촬영", "등산", "독서"]
+};
+
+const experience = [
+  {
+    id: 1,
+    title: "시니어 풀스택 개발자",
+    company: "테크 스타트업",
+    period: "2022.03 - 현재",
+    location: "서울",
+    description: "React/Node.js 기반 SaaS 플랫폼 개발 리드. 마이크로서비스 아키텍처 설계 및 구현, 팀 기술 멘토링 담당.",
+    technologies: ["React", "Node.js", "TypeScript", "AWS", "Docker", "PostgreSQL"],
+    achievements: [
+      "사용자 증가율 300% 달성으로 회사 성장에 기여",
+      "CI/CD 파이프라인 구축으로 배포 시간 80% 단축",
+      "코드 리뷰 문화 정착으로 버그 발생률 50% 감소"
+    ]
+  },
+  {
+    id: 2,
+    title: "프론트엔드 개발자",
+    company: "중견 IT 기업",
+    period: "2020.01 - 2022.02",
+    location: "서울",
+    description: "Vue.js 기반 관리자 시스템 및 고객 포털 개발. 웹 접근성 및 성능 최적화 전문가로 활동.",
+    technologies: ["Vue.js", "JavaScript", "SCSS", "Webpack", "Jest"],
+    achievements: [
+      "웹 접근성 AA 등급 인증 획득",
+      "페이지 로딩 속도 60% 개선",
+      "컴포넌트 라이브러리 구축으로 개발 효율성 향상"
+    ]
+  },
+  {
+    id: 3,
+    title: "주니어 웹 개발자",
+    company: "웹 에이전시",
+    period: "2019.03 - 2019.12",
+    location: "서울",
+    description: "다양한 기업 웹사이트 및 쇼핑몰 개발. HTML/CSS/JavaScript 기초 역량 강화 및 반응형 웹 전문성 확보.",
+    technologies: ["HTML", "CSS", "JavaScript", "jQuery", "PHP", "MySQL"],
+    achievements: [
+      "20+ 기업 웹사이트 성공적 런칭",
+      "모바일 반응형 웹 개발 전문성 확보",
+      "고객 만족도 평균 4.8/5.0 달성"
+    ]
+  }
+];
+
+const education = [
+  {
+    id: 1,
+    degree: "컴퓨터공학 학사",
+    school: "서울대학교",
+    period: "2015.03 - 2019.02",
+    description: "소프트웨어 공학, 데이터베이스, 알고리즘 전공. 졸업 프로젝트로 웹 기반 학습 관리 시스템 개발.",
+    gpa: "3.8/4.0"
+  }
+];
+
+const certifications = [
+  {
+    name: "AWS Certified Solutions Architect",
+    issuer: "Amazon Web Services",
+    date: "2023.06",
+    credential: "SAA-C03"
+  },
+  {
+    name: "정보처리기사",
+    issuer: "한국산업인력공단",
+    date: "2022.11",
+    credential: "22202012345"
+  }
+];
+
+const skillCategories = [
+  {
+    name: "프론트엔드",
+    color: "blue",
+    skills: [
+      { name: "React", level: "전문가", experience: "4년" },
+      { name: "Vue.js", level: "고급", experience: "3년" },
+      { name: "TypeScript", level: "고급", experience: "3년" },
+      { name: "Astro", level: "중급", experience: "1년" },
+      { name: "Tailwind CSS", level: "고급", experience: "2년" }
+    ]
+  },
+  {
+    name: "백엔드",
+    color: "green",
+    skills: [
+      { name: "Node.js", level: "고급", experience: "4년" },
+      { name: "Express.js", level: "고급", experience: "4년" },
+      { name: "NestJS", level: "중급", experience: "2년" },
+      { name: "Python", level: "중급", experience: "2년" },
+      { name: "Django", level: "초급", experience: "1년" }
+    ]
+  }
+];
+
+const stats = [
+  { label: "개발 경험", value: "5년+" },
+  { label: "완료 프로젝트", value: "50+" },
+  { label: "기술 스택", value: "25+" },
+  { label: "만족한 고객", value: "100+" }
+];
+---
+
+<Layout 
+  title="김개발 소개 - 5년 경력 풀스택 웹 개발자 | React, Node.js 전문가"
+  description="5년 경력의 풀스택 웹 개발자 김개발입니다. React, Vue.js, Node.js, TypeScript를 활용한 SaaS 플랫폼 개발 경험이 있으며, AWS 인증을 보유하고 있습니다. 사용자 중심의 웹 애플리케이션 개발을 전문으로 합니다."
+  image="/images/profile.jpg"
+>
+  <!-- Person Schema for About Page -->
+  <StructuredData 
+    type="person" 
+    data={{
+      description: "5년 경력의 풀스택 웹 개발자로, React, Vue.js, Node.js, TypeScript를 활용한 SaaS 플랫폼 개발을 전문으로 합니다. AWS 인증을 보유하고 있으며, 사용자 중심의 웹 애플리케이션 개발에 열정을 가지고 있습니다.",
+      image: "/images/profile.jpg"
+    }} 
+    slot="head"
+  />
+  
+  <!-- WebPage Schema -->
+  <StructuredData 
+    type="webPage" 
+    data={{
+      title: "김개발 소개 - 5년 경력 풀스택 웹 개발자",
+      description: "5년 경력의 풀스택 웹 개발자 김개발의 상세한 경력, 기술 스택, 교육 배경을 소개합니다.",
+      url: Astro.url.toString(),
+      about: "Developer Profile and Career Information",
+      keywords: ["풀스택 개발자", "React", "Vue.js", "Node.js", "TypeScript", "AWS", "개발자 이력서"]
+    }} 
+    slot="head"
+  />
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-primary-50 to-accent-50 dark:from-secondary-900 dark:to-secondary-800 py-20">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        <!-- Profile Image -->
+        <div class="flex-shrink-0">
+          <div class="relative">
+            <img 
+              src={personalInfo.image} 
+              alt={personalInfo.name}
+              class="w-64 h-64 rounded-full object-cover shadow-xl border-4 border-white dark:border-secondary-700"
+              loading="eager"
+            />
+            <div class="absolute -bottom-4 -right-4 bg-primary-500 text-white rounded-full p-3 shadow-lg">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="flex-1 text-center lg:text-left">
+          <h1 class="text-4xl lg:text-5xl font-bold text-secondary-900 dark:text-white mb-4">
+            {personalInfo.name}
+          </h1>
+          <p class="text-xl lg:text-2xl text-primary-600 dark:text-primary-400 font-medium mb-6">
+            {personalInfo.title}
+          </p>
+          <p class="text-lg text-secondary-600 dark:text-secondary-300 mb-8 leading-relaxed max-w-2xl">
+            {personalInfo.bio}
+          </p>
+          
+          <!-- Contact Info -->
+          <div class="flex flex-wrap gap-6 justify-center lg:justify-start text-secondary-600 dark:text-secondary-300 mb-8">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>{personalInfo.location}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+              </svg>
+              <a href={`mailto:${personalInfo.email}`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                {personalInfo.email}
+              </a>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+            <Button variant="primary" size="lg" href="#contact">
+              연락하기
+            </Button>
+            <Button variant="secondary" size="lg" href="/resume.pdf" target="_blank">
+              이력서 다운로드
+            </Button>
+          </div>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-16 bg-white dark:bg-secondary-900">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        {stats.map((stat) => (
+          <div class="text-center">
+            <div class="text-3xl lg:text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">
+              {stat.value}
+            </div>
+            <div class="text-secondary-600 dark:text-secondary-300 font-medium">
+              {stat.label}
+            </div>
+          </div>
+        ))}
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Experience Section -->
+  <section class="py-20 bg-secondary-50 dark:bg-secondary-800">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl lg:text-4xl font-bold text-secondary-900 dark:text-white mb-4">
+          개발 경력 및 프로젝트 경험
+        </h2>
+        <p class="text-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+          다양한 프로젝트와 팀에서 쌓은 경험을 통해 성장해왔습니다.
+        </p>
+      </div>
+
+      <div class="relative">
+        <!-- Timeline Line -->
+        <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-primary-200 dark:bg-primary-700 hidden lg:block"></div>
+        
+        <div class="space-y-12">
+          {experience.map((job) => (
+            <div class="relative lg:pl-20">
+              <!-- Timeline Dot -->
+              <div class="absolute left-6 top-6 w-4 h-4 bg-primary-500 rounded-full border-4 border-white dark:border-secondary-800 hidden lg:block"></div>
+              
+              <Card class="p-8 hover:shadow-xl transition-all duration-300">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6">
+                  <div>
+                    <h3 class="text-xl font-bold text-secondary-900 dark:text-white mb-2">
+                      {job.title}
+                    </h3>
+                    <p class="text-lg text-primary-600 dark:text-primary-400 font-medium mb-1">
+                      {job.company}
+                    </p>
+                    <p class="text-secondary-500 dark:text-secondary-400">
+                      {job.location}
+                    </p>
+                  </div>
+                  <Badge variant="filled" color="secondary" size="lg">
+                    {job.period}
+                  </Badge>
+                </div>
+                
+                <p class="text-secondary-600 dark:text-secondary-300 mb-6 leading-relaxed">
+                  {job.description}
+                </p>
+                
+                <!-- Technologies -->
+                <div class="mb-6">
+                  <h4 class="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-3">
+                    사용 기술
+                  </h4>
+                  <div class="flex flex-wrap gap-2">
+                    {job.technologies.map((tech) => (
+                      <Badge variant="filled" color="primary" size="sm">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                <!-- Achievements -->
+                <div>
+                  <h4 class="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-3">
+                    주요 성과
+                  </h4>
+                  <ul class="space-y-2">
+                    {job.achievements.map((achievement) => (
+                      <li class="flex items-start gap-3 text-secondary-600 dark:text-secondary-300">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span>{achievement}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Education & Certifications -->
+  <section class="py-20 bg-white dark:bg-secondary-900">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="grid lg:grid-cols-2 gap-16">
+        <!-- Education -->
+        <div>
+          <h2 class="text-3xl font-bold text-secondary-900 dark:text-white mb-8">
+            교육 배경 및 학력
+          </h2>
+          {education.map((edu) => (
+            <Card class="p-6">
+              <h3 class="text-xl font-bold text-secondary-900 dark:text-white mb-2">
+                {edu.degree}
+              </h3>
+              <p class="text-lg text-primary-600 dark:text-primary-400 font-medium mb-1">
+                {edu.school}
+              </p>
+              <p class="text-secondary-500 dark:text-secondary-400 mb-4">
+                {edu.period} • GPA: {edu.gpa}
+              </p>
+              <p class="text-secondary-600 dark:text-secondary-300">
+                {edu.description}
+              </p>
+            </Card>
+          ))}
+        </div>
+
+        <!-- Certifications -->
+        <div>
+          <h2 class="text-3xl font-bold text-secondary-900 dark:text-white mb-8">
+            전문 자격증 및 인증
+          </h2>
+          <div class="space-y-4">
+            {certifications.map((cert) => (
+              <Card class="p-6">
+                <h3 class="text-lg font-bold text-secondary-900 dark:text-white mb-2">
+                  {cert.name}
+                </h3>
+                <p class="text-primary-600 dark:text-primary-400 font-medium mb-1">
+                  {cert.issuer}
+                </p>
+                <div class="flex justify-between text-sm text-secondary-500 dark:text-secondary-400">
+                  <span>취득일: {cert.date}</span>
+                  <span>자격번호: {cert.credential}</span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="py-20 bg-secondary-50 dark:bg-secondary-800">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl lg:text-4xl font-bold text-secondary-900 dark:text-white mb-4">
+          기술 스택
+        </h2>
+        <p class="text-lg text-secondary-600 dark:text-secondary-300 max-w-2xl mx-auto">
+          다양한 기술을 활용하여 최적의 솔루션을 제공합니다.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8">
+        {skillCategories.map((category) => (
+          <Card class="p-8">
+            <h3 class="text-xl font-bold text-secondary-900 dark:text-white mb-6 flex items-center gap-3">
+              <span class={`w-3 h-3 rounded-full bg-${category.color}-500`}></span>
+              {category.name}
+            </h3>
+            <div class="space-y-4">
+              {category.skills.map((skill) => (
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="font-medium text-secondary-900 dark:text-white">
+                      {skill.name}
+                    </p>
+                    <p class="text-sm text-secondary-500 dark:text-secondary-400">
+                      {skill.experience} 경험
+                    </p>
+                  </div>
+                  <Badge 
+                    variant={skill.level === '전문가' ? 'filled' : skill.level === '고급' ? 'filled' : 'outline'}
+                    color={skill.level === '전문가' ? 'primary' : skill.level === '고급' ? 'secondary' : 'primary'}
+                    size="sm"
+                  >
+                    {skill.level}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- Personal Section -->
+  <section class="py-20 bg-white dark:bg-secondary-900">
+    <MainContent maxWidth="6xl" padding="lg">
+      <div class="grid lg:grid-cols-2 gap-16">
+        <!-- Languages -->
+        <div>
+          <h2 class="text-3xl font-bold text-secondary-900 dark:text-white mb-8">
+            언어 능력
+          </h2>
+          <div class="space-y-4">
+            {personalInfo.languages.map((language) => (
+              <div class="flex items-center gap-4 p-4 bg-secondary-50 dark:bg-secondary-800 rounded-lg">
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span class="text-secondary-700 dark:text-secondary-300">{language}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Interests -->
+        <div>
+          <h2 class="text-3xl font-bold text-secondary-900 dark:text-white mb-8">
+            관심사 & 취미
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            {personalInfo.interests.map((interest) => (
+              <Badge variant="outline" size="lg">
+                {interest}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 bg-gradient-to-r from-primary-600 to-accent-600 text-white">
+    <MainContent maxWidth="4xl" padding="lg">
+      <div class="text-center">
+        <h2 class="text-3xl lg:text-4xl font-bold mb-6">
+          함께 프로젝트를 만들어보세요!
+        </h2>
+        <p class="text-xl mb-8 opacity-90">
+          새로운 기회와 도전을 기다리고 있습니다. 언제든 연락해주세요.
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <Button variant="secondary" size="lg" href="#contact">
+            프로젝트 의뢰하기
+          </Button>
+          <Button variant="outline" size="lg" href="mailto:developer@example.com">
+            이메일 보내기
+          </Button>
+        </div>
+      </div>
+    </MainContent>
+  </section>
+</Layout>
+
+<style>
+  /* Timeline 애니메이션 */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .timeline-item {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  /* 스킬 레벨 progress bar */
+  .skill-progress {
+    background: linear-gradient(90deg, var(--tw-color-primary-500), var(--tw-color-accent-500));
+    height: 4px;
+    border-radius: 2px;
+    transform-origin: left;
+    animation: skillBarAnimation 1.5s ease-out forwards;
+  }
+
+  @keyframes skillBarAnimation {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+</style>
+
+<script>
+  // 스크롤 애니메이션
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in');
+      }
+    });
+  }, observerOptions);
+
+  // 애니메이션 대상 요소들
+  document.querySelectorAll('.timeline-item, .card').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // 통계 카운터 애니메이션
+  function animateCounters() {
+    const counters = document.querySelectorAll('[data-counter]');
+    
+    counters.forEach((counter) => {
+      const target = parseInt(counter.getAttribute('data-counter') || '0');
+      const duration = 2000;
+      const step = target / (duration / 16);
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        counter.textContent = Math.floor(current).toString();
+      }, 16);
+    });
+  }
+
+  // 페이지 로드 시 실행
+  document.addEventListener('DOMContentLoaded', animateCounters);
+</script>

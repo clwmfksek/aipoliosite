@@ -404,9 +404,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 				observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 			}
 		</script>
+
+		<!-- 글로벌 스타일 -->
+		<style>
+			@import '../styles/global.css';
+		</style>
 	</body>
 </html>
-
-<style>
-	@import '../styles/global.css';
-</style>

@@ -4,11 +4,6 @@
   "github": {
     "silent": true
   },
-  "functions": {
-    "src/pages/api/contact.ts": {
-      "maxDuration": 10
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
@@ -148,13 +143,7 @@
       "permanent": true
     }
   ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ],
   "trailingSlash": false,
   "cleanUrls": true,
   "framework": "astro"
-} 
+}

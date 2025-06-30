@@ -202,29 +202,18 @@ const responsiveWidths = width ? [
               img.classList.add('loaded');
             });
             
-            if (img.complete) {
-              img.classList.add('loaded');
-            }
-            
             imageObserver.unobserve(img);
           }
         });
-      }, {
-        rootMargin: '50px 0px',
-        threshold: 0.1
       });
       
       lazyImages.forEach(img => imageObserver.observe(img));
     } else {
-      // IntersectionObserver를 지원하지 않는 경우 즉시 로딩
+      // IntersectionObserver를 지원하지 않는 브라우저를 위한 폴백
       lazyImages.forEach(img => {
         (img as HTMLImageElement).addEventListener('load', () => {
-          (img as HTMLImageElement).classList.add('loaded');
+          img.classList.add('loaded');
         });
-        
-        if ((img as HTMLImageElement).complete) {
-          (img as HTMLImageElement).classList.add('loaded');
-        }
       });
     }
   });

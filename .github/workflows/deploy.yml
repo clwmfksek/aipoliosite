@@ -113,10 +113,15 @@ jobs:
         run: npx audit-ci --moderate
 
   # Deploy to Vercel (Production)
+  # 배포를 활성화하려면 GitHub Repository Settings > Environments > Variables에서
+  # ENABLE_VERCEL_DEPLOY 변수를 'true'로 설정하고 다음 Secrets을 추가하세요:
+  # - VERCEL_TOKEN: Vercel API Token
+  # - VERCEL_ORG_ID: Vercel Organization ID
+  # - VERCEL_PROJECT_ID: Vercel Project ID
   deploy-vercel:
     runs-on: ubuntu-latest
     needs: [build-and-test, security-audit]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.ENABLE_VERCEL_DEPLOY == 'true'
 
     environment:
       name: production-vercel
@@ -155,10 +160,14 @@ jobs:
           scope: ${{ secrets.VERCEL_ORG_ID }}
 
   # Deploy to Netlify (Staging)
+  # 배포를 활성화하려면 GitHub Repository Settings > Environments > Variables에서
+  # ENABLE_NETLIFY_DEPLOY 변수를 'true'로 설정하고 다음 Secrets을 추가하세요:
+  # - NETLIFY_AUTH_TOKEN: Netlify API Token
+  # - NETLIFY_SITE_ID: Netlify Site ID
   deploy-netlify:
     runs-on: ubuntu-latest
     needs: [build-and-test, security-audit]
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && vars.ENABLE_NETLIFY_DEPLOY == 'true'
 
     environment:
       name: staging-netlify

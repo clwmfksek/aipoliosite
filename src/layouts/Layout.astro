@@ -1,27 +1,18 @@
 ---
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
-import MainContent from '../components/layout/MainContent.astro';
 import SkipLink from '../components/SkipLink.astro';
 
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
-  noIndex?: boolean;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' | '6xl' | '7xl' | 'full';
-  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  fullHeight?: boolean;
 }
 
 const {
   title = '포트폴리오',
   description = '개발자 포트폴리오 사이트',
   image = '/favicon.svg',
-  noIndex = false,
-  maxWidth = '7xl',
-  padding = 'lg',
-  fullHeight = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);

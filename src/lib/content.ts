@@ -1,15 +1,13 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import type {
-  ProjectEntry,
-  BlogEntry,
-  ExperienceEntry,
-  SkillEntry,
-  ProjectForCard,
-  BlogPostForCard,
-  SkillForItem,
-  ExperienceForItem,
-} from '../types/content';
 import {
+  type ProjectEntry,
+  type BlogEntry,
+  type ExperienceEntry,
+  type SkillEntry,
+  type ProjectForCard,
+  type BlogPostForCard,
+  type SkillForItem,
+  type ExperienceForItem,
   projectEntryToCard,
   blogEntryToCard,
   skillEntryToItem,

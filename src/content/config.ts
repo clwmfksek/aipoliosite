@@ -3,7 +3,7 @@ import { defineCollection, z, type ImageFunction } from 'astro:content';
 // 프로젝트 컬렉션 스키마
 const projectsCollection = defineCollection({
   type: 'content',
-  schema: ({ image }: { image: ImageFunction }) =>
+  schema: ({ image: _image }: { image: ImageFunction }) =>
     z.object({
       // 기본 정보
       title: z.string(),
@@ -52,7 +52,7 @@ const projectsCollection = defineCollection({
 // 블로그 컬렉션 스키마
 const blogCollection = defineCollection({
   type: 'content',
-  schema: ({ image }: { image: ImageFunction }) =>
+  schema: ({ image: _image }: { image: ImageFunction }) =>
     z.object({
       // 기본 정보
       title: z.string(),

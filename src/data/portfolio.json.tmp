@@ -1,0 +1,123 @@
+{
+  "personal": {
+    "name": "신효환",
+    "title": "개발자",
+    "subtitle": "React • Node.js • TypeScript 전문가",
+    "email": "clwmfksek@gmail.com",
+    "phone": "+82 10-2140-8518",
+    "location": "서울, 대한민국",
+    "availability": "프리랜스/정규직 가능",
+    "bio": "바뀌어라",
+    "profileImage": "/images/profile.jpg",
+    "languages": [
+      "한국어 (모국어)",
+      "영어 (비즈니스 수준)",
+      "일본어 (기초 회화)"
+    ],
+    "interests": [
+      "오픈소스 기여",
+      "기술 블로깅",
+      "사진 촬영",
+      "등산",
+      "독서"
+    ]
+  },
+  "social": {
+    "github": {
+      "url": "https://github.com/yourusername",
+      "username": "@yourusername"
+    },
+    "linkedin": {
+      "url": "https://linkedin.com/in/yourusername",
+      "username": "in/yourusername"
+    },
+    "twitter": {
+      "url": "https://twitter.com/yourusername",
+      "username": "@yourusername"
+    },
+    "instagram": {
+      "url": "https://instagram.com/yourusername",
+      "username": "@yourusername"
+    },
+    "discord": {
+      "url": "https://discord.com/users/yourusername",
+      "username": "username#1234"
+    },
+    "youtube": {
+      "url": "https://youtube.com/@yourchannel",
+      "username": "@yourchannel"
+    }
+  },
+  "education": {
+    "university": "서울대학교",
+    "degree": "컴퓨터공학과",
+    "graduationYear": "2019"
+  },
+  "experience": {
+    "totalYears": 5,
+    "specialties": [
+      "Frontend Development",
+      "Backend Development",
+      "Full-stack Development",
+      "SaaS Platform Development"
+    ]
+  },
+  "aboutHighlights": [
+    {
+      "icon": "💡",
+      "title": "창의적 문제 해결",
+      "description": "복잡한 비즈니스 요구사항을 효율적이고 우아한 코드로 변환하는 것을 좋아합니다."
+    },
+    {
+      "icon": "🌱",
+      "title": "지속적인 학습",
+      "description": "빠르게 변화하는 기술 환경에서 항상 최신 트렌드를 따라가며 성장하고 있습니다."
+    },
+    {
+      "icon": "🤝",
+      "title": "협업과 소통",
+      "description": "팀워크를 중시하며, 명확한 소통을 통해 프로젝트의 성공을 이끌어냅니다."
+    },
+    {
+      "icon": "⚡",
+      "title": "성능 최적화",
+      "description": "사용자 경험을 개선하기 위해 항상 성능과 접근성을 고려하여 개발합니다."
+    }
+  ],
+  "stats": [
+    {
+      "label": "프로젝트 완료",
+      "value": "50+",
+      "icon": "📊"
+    },
+    {
+      "label": "개발 경력",
+      "value": "5년",
+      "icon": "💼"
+    },
+    {
+      "label": "기술 스택",
+      "value": "15+",
+      "icon": "🛠️"
+    },
+    {
+      "label": "만족한 고객",
+      "value": "30+",
+      "icon": "😊"
+    }
+  ],
+  "seo": {
+    "defaultTitle": "김개발 - 풀스택 개발자 포트폴리오",
+    "defaultDescription": "혁신적인 웹 경험을 만드는 풀스택 개발자 김개발의 포트폴리오입니다. React, Node.js, TypeScript를 활용한 다양한 프로젝트를 만나보세요.",
+    "keywords": [
+      "풀스택 개발자",
+      "React",
+      "Node.js",
+      "TypeScript",
+      "웹 개발",
+      "포트폴리오"
+    ],
+    "ogImage": "/og-portfolio.jpg"
+  },
+  "lastUpdated": "2025-06-30T18:18:20.297Z"
+}

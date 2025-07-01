@@ -6,14 +6,17 @@ import AboutMeSection from '../components/sections/AboutMeSection.astro';
 import SkillsSection from '../components/sections/SkillsSection.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
 import StructuredData from '../components/seo/StructuredData.astro';
+import { getPortfolioData } from '../utils/portfolio-data';
+
+// 포트폴리오 데이터 로드
+const portfolioData = getPortfolioData();
 
 // Sample data for the homepage
 const heroData = {
-  name: '김개발',
-  title: '풀스택 개발자',
-  subtitle: '혁신적인 웹 경험을 만들어갑니다',
-  description:
-    '최신 기술과 창의적인 아이디어로 사용자 중심의 웹 애플리케이션을 개발하며, 비즈니스 목표와 기술적 우수성을 조화시키는 솔루션을 제공합니다.',
+  name: portfolioData.personal.name,
+  title: portfolioData.personal.title,
+  subtitle: portfolioData.personal.subtitle,
+  description: portfolioData.personal.bio,
   primaryCta: {
     text: '프로젝트 보기',
     href: '#projects',
@@ -66,35 +69,9 @@ const featuredProjects = [
   },
 ];
 
-const aboutStats = [
-  { number: '3+', label: 'Years', description: '개발 경험' },
-  { number: '50+', label: 'Projects', description: '완료한 프로젝트' },
-  { number: '15+', label: 'Technologies', description: '사용 기술' },
-  { number: '∞', label: 'Coffee', description: '마신 커피 잔 수' },
-];
-
-const aboutHighlights = [
-  {
-    icon: '💡',
-    title: '창의적 문제 해결',
-    description: '복잡한 비즈니스 요구사항을 효율적이고 우아한 코드로 변환하는 것을 좋아합니다.',
-  },
-  {
-    icon: '🌱',
-    title: '지속적인 학습',
-    description: '빠르게 변화하는 기술 환경에서 항상 최신 트렌드를 따라가며 성장하고 있습니다.',
-  },
-  {
-    icon: '🤝',
-    title: '협업과 소통',
-    description: '팀워크를 중시하며, 명확한 소통을 통해 프로젝트의 성공을 이끌어냅니다.',
-  },
-  {
-    icon: '⚡',
-    title: '성능 최적화',
-    description: '사용자 경험을 개선하기 위해 항상 성능과 접근성을 고려하여 개발합니다.',
-  },
-];
+// 동적 데이터 사용
+const aboutStats = portfolioData.stats;
+const aboutHighlights = portfolioData.aboutHighlights;
 
 const skillCategories = [
   {
@@ -253,8 +230,8 @@ const socialLinks = [
 ---
 
 <Layout
-  title="김개발 - 풀스택 개발자 포트폴리오"
-  description="혁신적인 웹 경험을 만드는 풀스택 개발자 김개발의 포트폴리오입니다. React, Node.js, TypeScript를 활용한 다양한 프로젝트를 만나보세요."
+  title="신효환 - AX 개발자"
+  description="AX 개발자입니다. React, Node.js, TypeScript를 활용한 다양한 프로젝트를 만나보세요."
   image="/og-portfolio.jpg"
 >
   <!-- Screen reader friendly main heading -->

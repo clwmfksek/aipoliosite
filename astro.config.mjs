@@ -4,6 +4,7 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import compressor from 'astro-compressor';
+import vercel from '@astrojs/vercel/serverless';
 
 // Vercel 환경에서는 자체 압축 사용 (빌드 시간 단축)
 const isVercel = process.env.VERCEL === '1';
@@ -31,7 +32,10 @@ export default defineConfig({
           }),
         ]),
   ].filter(Boolean),
-  output: 'static',
+  output: 'server',
+  adapter: vercel({
+    webAnalytics: { enabled: true },
+  }),
   build: {
     // 인라인 CSS 최적화
     inlineStylesheets: 'auto',

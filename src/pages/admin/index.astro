@@ -1,0 +1,1816 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export const prerender = false;
+
+// 환경변수로 관리되는 관리자 비밀번호
+const ADMIN_PASSWORD = import.meta.env.ADMIN_PASSWORD || 'admin123';
+---
+
+<Layout title="포트폴리오 관리자 - Admin Panel" description="포트폴리오 관리자 페이지">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <h1 class="text-xl font-semibold text-gray-900 dark:text-white">포트폴리오 관리자</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <button
+              id="logout-btn"
+              class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hidden"
+            >
+              로그아웃
+            </button>
+            <a
+              href="/"
+              class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            >
+              사이트 보기
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Login Form -->
+    <div id="login-section" class="min-h-screen flex items-center justify-center px-4">
+      <div class="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">관리자 로그인</h2>
+          <p class="text-gray-600 dark:text-gray-400 mt-2">
+            포트폴리오 관리에 접근하려면 로그인하세요
+          </p>
+        </div>
+
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              비밀번호
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              placeholder="관리자 비밀번호를 입력하세요"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+          >
+            로그인
+          </button>
+
+          <div id="login-error" class="text-red-600 text-sm text-center hidden">
+            비밀번호가 올바르지 않습니다.
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <span class="text-white text-sm font-medium">👤</span>
+                </div>
+              </div>
+              <div class="ml-5 w-0 flex-1">
+                <dl>
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    개인 정보
+                  </dt>
+                  <dd class="text-lg font-medium text-gray-900 dark:text-white">관리 중</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                  <span class="text-white text-sm font-medium">🔗</span>
+                </div>
+              </div>
+              <div class="ml-5 w-0 flex-1">
+                <dl>
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    소셜 링크
+                  </dt>
+                  <dd class="text-lg font-medium text-gray-900 dark:text-white" id="social-count">
+                    4개
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <span class="text-white text-sm font-medium">📊</span>
+                </div>
+              </div>
+              <div class="ml-5 w-0 flex-1">
+                <dl>
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    통계 항목
+                  </dt>
+                  <dd class="text-lg font-medium text-gray-900 dark:text-white" id="stats-count">
+                    4개
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                  <span class="text-white text-sm font-medium">🎯</span>
+                </div>
+              </div>
+              <div class="ml-5 w-0 flex-1">
+                <dl>
+                  <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                    하이라이트
+                  </dt>
+                  <dd
+                    class="text-lg font-medium text-gray-900 dark:text-white"
+                    id="highlights-count"
+                  >
+                    4개
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
+          <div class="border-b border-gray-200 dark:border-gray-700">
+            <nav class="-mb-px flex space-x-8 px-6 overflow-x-auto" aria-label="Tabs">
+              <button
+                class="admin-tab py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600 dark:text-blue-400 whitespace-nowrap"
+                data-tab="personal"
+              >
+                개인 정보
+              </button>
+              <button
+                class="admin-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 whitespace-nowrap"
+                data-tab="social"
+              >
+                소셜 링크
+              </button>
+              <button
+                class="admin-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 whitespace-nowrap"
+                data-tab="portfolio"
+              >
+                포트폴리오
+              </button>
+              <button
+                class="admin-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 whitespace-nowrap"
+                data-tab="blog"
+              >
+                블로그
+              </button>
+              <button
+                class="admin-tab py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 whitespace-nowrap"
+                data-tab="seo"
+              >
+                SEO 설정
+              </button>
+            </nav>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="p-6">
+            <!-- Personal Info Tab -->
+            <div id="personal-tab" class="tab-content">
+              <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  개인 정보 관리
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  포트폴리오에 표시될 개인 정보를 수정할 수 있습니다.
+                </p>
+              </div>
+
+              <!-- Success/Error Messages -->
+              <div id="personal-message" class="mb-4 hidden">
+                <div
+                  id="personal-success"
+                  class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg hidden"
+                >
+                  개인 정보가 성공적으로 업데이트되었습니다.
+                </div>
+                <div
+                  id="personal-error"
+                  class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg hidden"
+                >
+                  개인 정보 업데이트 중 오류가 발생했습니다.
+                </div>
+              </div>
+
+              <form id="personal-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      이름 *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      placeholder="홍길동"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      직책 *
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      required
+                      placeholder="프론트엔드 개발자"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      이메일 *
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      placeholder="contact@example.com"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      전화번호
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="010-1234-5678"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      위치
+                    </label>
+                    <input
+                      type="text"
+                      name="location"
+                      placeholder="서울, 대한민국"
+                      class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    자기소개 *
+                  </label>
+                  <textarea
+                    name="bio"
+                    rows="4"
+                    required
+                    placeholder="간단한 자기소개를 작성해주세요..."
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  ></textarea>
+                </div>
+
+                <div class="flex justify-end">
+                  <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md transition-colors disabled:cursor-not-allowed min-w-[120px]"
+                    id="personal-submit"
+                  >
+                    <span id="personal-submit-text">저장하기</span>
+                    <span id="personal-submit-loading" class="hidden">저장 중...</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Social Links Tab -->
+            <div id="social-tab" class="tab-content hidden">
+              <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  소셜 링크 관리
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  포트폴리오에 표시될 소셜 미디어 링크를 관리할 수 있습니다.
+                </p>
+              </div>
+
+              <!-- Success/Error Messages -->
+              <div id="social-message" class="mb-4 hidden">
+                <div
+                  id="social-success"
+                  class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg hidden"
+                >
+                  소셜 링크가 성공적으로 업데이트되었습니다.
+                </div>
+                <div
+                  id="social-error"
+                  class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg hidden"
+                >
+                  소셜 링크 업데이트 중 오류가 발생했습니다.
+                </div>
+              </div>
+
+              <form id="social-form" class="space-y-8">
+                <!-- GitHub -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4
+                    class="text-md font-medium text-gray-900 dark:text-white mb-4 flex items-center"
+                  >
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                      ></path>
+                    </svg>
+                    GitHub
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >URL</label
+                      >
+                      <input
+                        type="url"
+                        name="github_url"
+                        placeholder="https://github.com/username"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >사용자명</label
+                      >
+                      <input
+                        type="text"
+                        name="github_username"
+                        placeholder="username"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LinkedIn -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4
+                    class="text-md font-medium text-gray-900 dark:text-white mb-4 flex items-center"
+                  >
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                      ></path>
+                    </svg>
+                    LinkedIn
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >URL</label
+                      >
+                      <input
+                        type="url"
+                        name="linkedin_url"
+                        placeholder="https://linkedin.com/in/username"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >사용자명</label
+                      >
+                      <input
+                        type="text"
+                        name="linkedin_username"
+                        placeholder="username"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Instagram -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4
+                    class="text-md font-medium text-gray-900 dark:text-white mb-4 flex items-center"
+                  >
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                      ></path>
+                    </svg>
+                    Instagram
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >URL</label
+                      >
+                      <input
+                        type="url"
+                        name="instagram_url"
+                        placeholder="https://instagram.com/username"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >사용자명</label
+                      >
+                      <input
+                        type="text"
+                        name="instagram_username"
+                        placeholder="username"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Discord -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                  <h4
+                    class="text-md font-medium text-gray-900 dark:text-white mb-4 flex items-center"
+                  >
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                      <path
+                        d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419-.0002 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9554 2.4189-2.1568 2.4189Z"
+                      ></path>
+                    </svg>
+                    Discord
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >URL</label
+                      >
+                      <input
+                        type="url"
+                        name="discord_url"
+                        placeholder="https://discord.com/users/userid"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                        >사용자명</label
+                      >
+                      <input
+                        type="text"
+                        name="discord_username"
+                        placeholder="username#1234"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex justify-end">
+                  <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md transition-colors disabled:cursor-not-allowed min-w-[120px]"
+                    id="social-submit"
+                  >
+                    <span id="social-submit-text">저장하기</span>
+                    <span id="social-submit-loading" class="hidden">저장 중...</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- SEO Tab -->
+            <div id="seo-tab" class="tab-content hidden">
+              <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">SEO 설정</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  검색 엔진 최적화를 위한 기본 설정을 관리할 수 있습니다.
+                </p>
+              </div>
+
+              <!-- Success/Error Messages -->
+              <div id="seo-message" class="mb-4 hidden">
+                <div
+                  id="seo-success"
+                  class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg hidden"
+                >
+                  SEO 설정이 성공적으로 업데이트되었습니다.
+                </div>
+                <div
+                  id="seo-error"
+                  class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg hidden"
+                >
+                  SEO 설정 업데이트 중 오류가 발생했습니다.
+                </div>
+              </div>
+
+              <form id="seo-form" class="space-y-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    기본 사이트 제목 *
+                  </label>
+                  <input
+                    type="text"
+                    name="defaultTitle"
+                    required
+                    placeholder="김개발 - 프론트엔드 개발자"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    브라우저 탭과 검색 결과에 표시될 기본 제목입니다.
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    기본 사이트 설명 *
+                  </label>
+                  <textarea
+                    name="defaultDescription"
+                    rows="4"
+                    required
+                    placeholder="창의적이고 혁신적인 웹 솔루션을 제공하는 프론트엔드 개발자입니다..."
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  ></textarea>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    검색 결과와 소셜 미디어 공유 시 표시될 설명입니다. (150-160자 권장)
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    키워드 (콤마로 구분)
+                  </label>
+                  <input
+                    type="text"
+                    name="keywords"
+                    placeholder="풀스택 개발자, React, Node.js, TypeScript, 웹 개발, 포트폴리오"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    검색 엔진에서 사이트를 찾을 때 사용할 키워드들을 입력하세요.
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    오픈 그래프 이미지 URL
+                  </label>
+                  <input
+                    type="url"
+                    name="ogImage"
+                    placeholder="/og-portfolio.jpg"
+                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  />
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    소셜 미디어에 공유될 때 표시할 이미지 경로입니다. (1200x630px 권장)
+                  </p>
+                </div>
+
+                <div class="flex justify-end">
+                  <button
+                    type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md transition-colors disabled:cursor-not-allowed min-w-[120px]"
+                    id="seo-submit"
+                  >
+                    <span id="seo-submit-text">저장하기</span>
+                    <span id="seo-submit-loading" class="hidden">저장 중...</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Portfolio Tab -->
+            <div id="portfolio-tab" class="tab-content hidden">
+              <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  포트폴리오 관리
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  프로젝트를 추가, 수정, 삭제할 수 있습니다.
+                </p>
+              </div>
+
+              <!-- Success/Error Messages -->
+              <div id="portfolio-message" class="mb-4 hidden">
+                <div
+                  id="portfolio-success"
+                  class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg hidden"
+                >
+                  포트폴리오가 성공적으로 업데이트되었습니다.
+                </div>
+                <div
+                  id="portfolio-error"
+                  class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg hidden"
+                >
+                  포트폴리오 업데이트 중 오류가 발생했습니다.
+                </div>
+              </div>
+
+              <!-- Project List -->
+              <div class="space-y-4" id="portfolio-list">
+                <!-- Projects will be loaded here -->
+              </div>
+
+              <!-- Add New Project Button -->
+              <div class="mt-6">
+                <button
+                  type="button"
+                  id="add-project-btn"
+                  class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  + 새 프로젝트 추가
+                </button>
+              </div>
+            </div>
+
+            <!-- Blog Tab -->
+            <div id="blog-tab" class="tab-content hidden">
+              <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">블로그 관리</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  블로그 글을 추가, 수정, 삭제할 수 있습니다.
+                </p>
+              </div>
+
+              <!-- Success/Error Messages -->
+              <div id="blog-message" class="mb-4 hidden">
+                <div
+                  id="blog-success"
+                  class="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg hidden"
+                >
+                  블로그 글이 성공적으로 업데이트되었습니다.
+                </div>
+                <div
+                  id="blog-error"
+                  class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg hidden"
+                >
+                  블로그 글 업데이트 중 오류가 발생했습니다.
+                </div>
+              </div>
+
+              <!-- Blog Post List -->
+              <div class="space-y-4" id="blog-list">
+                <!-- Blog posts will be loaded here -->
+              </div>
+
+              <!-- Add New Blog Post Button -->
+              <div class="mt-6">
+                <button
+                  type="button"
+                  id="add-blog-btn"
+                  class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                >
+                  + 새 블로그 글 추가
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div id="message-container" class="fixed top-4 right-4 z-50"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Modal -->
+  <div
+    id="project-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 overflow-y-auto"
+    style="overscroll-behavior: contain;"
+  >
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full my-8 max-h-[90vh] overflow-y-auto"
+        style="scroll-behavior: smooth; -webkit-overflow-scrolling: touch;"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 id="project-modal-title" class="text-lg font-medium text-gray-900 dark:text-white">
+              프로젝트 추가
+            </h3>
+            <button
+              id="close-project-modal"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <form id="project-form" class="space-y-4">
+            <input type="hidden" id="project-slug" name="slug" />
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >프로젝트 제목 *</label
+              >
+              <input
+                type="text"
+                name="title"
+                required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="포트폴리오 웹사이트"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >설명 *</label
+              >
+              <textarea
+                name="description"
+                required
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="프로젝트에 대한 간단한 설명을 작성해주세요"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >기술 스택 (콤마로 구분)</label
+              >
+              <input
+                type="text"
+                name="tech"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="React, TypeScript, Tailwind CSS"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >카테고리</label
+              >
+              <select
+                name="category"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="web">웹 개발</option>
+                <option value="mobile">모바일 앱</option>
+                <option value="desktop">데스크톱 앱</option>
+                <option value="other">기타</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >데모 URL</label
+              >
+              <input
+                type="url"
+                name="demo"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="https://example.com"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >GitHub URL</label
+              >
+              <input
+                type="url"
+                name="github"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="https://github.com/username/repository"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >상태</label
+              >
+              <select
+                name="status"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="planned">계획됨</option>
+                <option value="in-progress">진행중</option>
+                <option value="completed">완료됨</option>
+                <option value="archived">보관됨</option>
+              </select>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                id="cancel-project-modal"
+                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+                id="project-submit-btn"
+              >
+                <span id="project-submit-text">저장</span>
+                <span id="project-submit-loading" class="hidden">저장 중...</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blog Modal -->
+  <div
+    id="blog-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 overflow-y-auto"
+    style="overscroll-behavior: contain;"
+  >
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full my-8 max-h-[90vh] overflow-y-auto"
+        style="scroll-behavior: smooth; -webkit-overflow-scrolling: touch;"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 id="blog-modal-title" class="text-lg font-medium text-gray-900 dark:text-white">
+              블로그 글 추가
+            </h3>
+            <button
+              id="close-blog-modal"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <form id="blog-form" class="space-y-4">
+            <input type="hidden" id="blog-slug" name="slug" />
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >제목 *</label
+              >
+              <input
+                type="text"
+                name="title"
+                required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="블로그 글 제목"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >설명 *</label
+              >
+              <textarea
+                name="description"
+                required
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="블로그 글에 대한 간단한 설명을 작성해주세요"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >태그 (콤마로 구분)</label
+              >
+              <input
+                type="text"
+                name="tags"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="JavaScript, 웹개발, 튜토리얼"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >작성자</label
+              >
+              <input
+                type="text"
+                name="author"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="김개발"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >내용</label
+              >
+              <textarea
+                name="content"
+                rows="6"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="마크다운 형식으로 블로그 내용을 작성해주세요..."></textarea>
+            </div>
+
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                name="published"
+                id="blog-published"
+                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              />
+              <label for="blog-published" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                즉시 게시
+              </label>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                id="cancel-blog-modal"
+                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+                id="blog-submit-btn"
+              >
+                <span id="blog-submit-text">저장</span>
+                <span id="blog-submit-loading" class="hidden">저장 중...</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Admin authentication state
+  let isAuthenticated = sessionStorage.getItem('admin-auth') === 'true';
+  let portfolioData: any = null;
+
+  // DOM elements
+  const loginSection = document.getElementById('login-section');
+  const adminDashboard = document.getElementById('admin-dashboard');
+  const loginForm = document.getElementById('login-form');
+  const loginError = document.getElementById('login-error');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  // Initialize
+  init();
+
+  function init() {
+    if (isAuthenticated) {
+      showDashboard();
+    } else {
+      showLogin();
+    }
+  }
+
+  function showLogin() {
+    loginSection?.classList.remove('hidden');
+    adminDashboard?.classList.add('hidden');
+    logoutBtn?.classList.add('hidden');
+  }
+
+  function showDashboard() {
+    loginSection?.classList.add('hidden');
+    adminDashboard?.classList.remove('hidden');
+    logoutBtn?.classList.remove('hidden');
+    loadPortfolioData();
+  }
+
+  // Login form handler
+  loginForm?.addEventListener('submit', async e => {
+    e.preventDefault();
+    const formData = new FormData(loginForm as HTMLFormElement);
+    const password = formData.get('password') as string;
+
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.ok) {
+        sessionStorage.setItem('admin-auth', 'true');
+        isAuthenticated = true;
+        showDashboard();
+        loginError?.classList.add('hidden');
+      } else {
+        loginError?.classList.remove('hidden');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      loginError?.classList.remove('hidden');
+    }
+  });
+
+  // Logout handler
+  logoutBtn?.addEventListener('click', () => {
+    sessionStorage.removeItem('admin-auth');
+    isAuthenticated = false;
+    showLogin();
+  });
+
+  // Tab switching
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', e => {
+      const target = (e.target as HTMLElement).dataset.tab;
+      switchTab(target);
+    });
+  });
+
+  function switchTab(target: string | undefined) {
+    if (!target) return;
+
+    // Prevent scroll jump during tab switch
+    const currentScrollY = window.scrollY;
+
+    // Update tab appearance
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+      tab.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+      tab.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+    });
+
+    const activeTab = document.querySelector(`[data-tab="${target}"]`);
+    activeTab?.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+    activeTab?.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+
+    // Show/hide content
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.add('hidden');
+    });
+
+    const targetContent = document.getElementById(`${target}-tab`);
+    if (targetContent) {
+      targetContent.classList.remove('hidden');
+    }
+
+    // Restore scroll position to prevent jumping
+    requestAnimationFrame(() => {
+      window.scrollTo(0, currentScrollY);
+    });
+
+    // Load content for specific tabs (delayed to prevent scroll jumping)
+    if (target === 'portfolio') {
+      setTimeout(() => loadProjects(), 0);
+    } else if (target === 'blog') {
+      setTimeout(() => loadBlogPosts(), 0);
+    }
+  }
+
+  // Load portfolio data
+  async function loadPortfolioData() {
+    try {
+      const response = await fetch('/api/admin/data');
+      if (response.ok) {
+        portfolioData = await response.json();
+        populateFormsWithData();
+      }
+    } catch (error) {
+      console.error('데이터 로드 실패:', error);
+      showMessage('데이터를 불러오는데 실패했습니다', 'error');
+    }
+  }
+
+  // Populate forms with current data
+  function populateFormsWithData() {
+    if (!portfolioData) return;
+
+    // Personal info form
+    const personalForm = document.getElementById('personal-form') as HTMLFormElement;
+    if (personalForm && portfolioData.personal) {
+      Object.keys(portfolioData.personal).forEach(key => {
+        const input = personalForm.querySelector(`[name="${key}"]`) as
+          | HTMLInputElement
+          | HTMLTextAreaElement;
+        if (input) {
+          input.value = portfolioData.personal[key] || '';
+        }
+      });
+    }
+
+    // Social form
+    const socialForm = document.getElementById('social-form') as HTMLFormElement;
+    if (socialForm && portfolioData.social) {
+      Object.keys(portfolioData.social).forEach(platform => {
+        const urlInput = socialForm.querySelector(`[name="${platform}_url"]`) as HTMLInputElement;
+        const usernameInput = socialForm.querySelector(
+          `[name="${platform}_username"]`
+        ) as HTMLInputElement;
+
+        if (urlInput && portfolioData.social[platform]?.url) {
+          urlInput.value = portfolioData.social[platform].url;
+        }
+        if (usernameInput && portfolioData.social[platform]?.username) {
+          usernameInput.value = portfolioData.social[platform].username;
+        }
+      });
+    }
+
+    // SEO form
+    const seoForm = document.getElementById('seo-form') as HTMLFormElement;
+    if (seoForm && portfolioData.seo) {
+      // defaultTitle과 defaultDescription
+      const titleInput = seoForm.querySelector('[name="defaultTitle"]') as HTMLInputElement;
+      const descInput = seoForm.querySelector('[name="defaultDescription"]') as HTMLTextAreaElement;
+      const ogImageInput = seoForm.querySelector('[name="ogImage"]') as HTMLInputElement;
+      const keywordsInput = seoForm.querySelector('[name="keywords"]') as HTMLInputElement;
+
+      if (titleInput) titleInput.value = portfolioData.seo.defaultTitle || '';
+      if (descInput) descInput.value = portfolioData.seo.defaultDescription || '';
+      if (ogImageInput) ogImageInput.value = portfolioData.seo.ogImage || '';
+
+      // keywords 배열을 문자열로 변환
+      if (keywordsInput && portfolioData.seo.keywords) {
+        keywordsInput.value = Array.isArray(portfolioData.seo.keywords)
+          ? portfolioData.seo.keywords.join(', ')
+          : '';
+      }
+    }
+
+    updateDashboardStats();
+  }
+
+  // Update dashboard stats
+  function updateDashboardStats() {
+    if (!portfolioData) return;
+
+    // Count only social links that have URLs
+    const socialCount = portfolioData.social
+      ? Object.values(portfolioData.social).filter((social: any) => social.url && social.url.trim())
+          .length
+      : 0;
+
+    document.getElementById('social-count')!.textContent = `${socialCount}개`;
+    document.getElementById('stats-count')!.textContent = `${(portfolioData.stats || []).length}개`;
+    document.getElementById('highlights-count')!.textContent =
+      `${(portfolioData.aboutHighlights || []).length}개`;
+  }
+
+  // Form submission handlers
+  document.getElementById('personal-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    await saveData('personal', new FormData(e.target as HTMLFormElement));
+  });
+
+  document.getElementById('social-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    await saveSocialData(new FormData(e.target as HTMLFormElement));
+  });
+
+  document.getElementById('seo-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    await saveSEOData(new FormData(e.target as HTMLFormElement));
+  });
+
+  // Save data function
+  async function saveData(section: string, formData: FormData) {
+    try {
+      const data: any = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+
+      const response = await fetch(`/api/admin/${section}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        showMessage(`${section} 정보가 성공적으로 저장되었습니다`, 'success');
+        await loadPortfolioData();
+      } else {
+        throw new Error('저장 실패');
+      }
+    } catch (error) {
+      console.error('저장 오류:', error);
+      showMessage('저장 중 오류가 발생했습니다', 'error');
+    }
+  }
+
+  // Save social data function
+  async function saveSocialData(formData: FormData) {
+    try {
+      const socialData: any = {};
+
+      formData.forEach((value, key) => {
+        const [platform, type] = key.split('_');
+        if (!socialData[platform]) {
+          socialData[platform] = {};
+        }
+        socialData[platform][type] = value;
+      });
+
+      const response = await fetch('/api/admin/social', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(socialData),
+      });
+
+      if (response.ok) {
+        showMessage('소셜 링크가 성공적으로 저장되었습니다', 'success');
+        await loadPortfolioData();
+      } else {
+        throw new Error('저장 실패');
+      }
+    } catch (error) {
+      console.error('저장 오류:', error);
+      showMessage('저장 중 오류가 발생했습니다', 'error');
+    }
+  }
+
+  // Save SEO data function
+  async function saveSEOData(formData: FormData) {
+    try {
+      const seoData: any = {};
+
+      formData.forEach((value, key) => {
+        if (key === 'keywords') {
+          // 키워드를 콤마로 분리하여 배열로 변환
+          seoData[key] = value
+            .toString()
+            .split(',')
+            .map(k => k.trim())
+            .filter(k => k.length > 0);
+        } else {
+          seoData[key] = value;
+        }
+      });
+
+      const response = await fetch('/api/admin/seo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(seoData),
+      });
+
+      if (response.ok) {
+        showMessage('SEO 설정이 성공적으로 저장되었습니다', 'success');
+        await loadPortfolioData();
+      } else {
+        throw new Error('저장 실패');
+      }
+    } catch (error) {
+      console.error('SEO 저장 오류:', error);
+      showMessage('SEO 설정 저장 중 오류가 발생했습니다', 'error');
+    }
+  }
+
+  // Show message function
+  function showMessage(message: string, type: 'success' | 'error') {
+    const container = document.getElementById('message-container');
+    if (!container) return;
+
+    const messageEl = document.createElement('div');
+    messageEl.className = `px-4 py-3 rounded-md shadow-lg transition-all duration-300 ${
+      type === 'success'
+        ? 'bg-green-100 border border-green-400 text-green-700'
+        : 'bg-red-100 border border-red-400 text-red-700'
+    }`;
+    messageEl.textContent = message;
+
+    container.appendChild(messageEl);
+
+    setTimeout(() => {
+      messageEl.remove();
+    }, 5000);
+  }
+
+  // Portfolio and Blog Management Functions
+  async function loadProjects() {
+    try {
+      const response = await fetch('/api/admin/projects');
+      if (response.ok) {
+        const projects = await response.json();
+        displayProjects(projects);
+      }
+    } catch (error) {
+      console.error('프로젝트 로드 실패:', error);
+    }
+  }
+
+  async function loadBlogPosts() {
+    try {
+      const response = await fetch('/api/admin/blog');
+      if (response.ok) {
+        const posts = await response.json();
+        displayBlogPosts(posts);
+      }
+    } catch (error) {
+      console.error('블로그 글 로드 실패:', error);
+    }
+  }
+
+  function displayProjects(projects: any[]) {
+    const container = document.getElementById('portfolio-list');
+    if (!container) return;
+
+    container.innerHTML = projects
+      .map(
+        project => `
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <h4 class="text-lg font-medium text-gray-900 dark:text-white">${project.title}</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${project.description || '설명 없음'}</p>
+            <div class="flex flex-wrap gap-2 mt-2">
+              ${(project.tech || [])
+                .map(
+                  (tech: string) =>
+                    `<span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded">${tech}</span>`
+                )
+                .join('')}
+            </div>
+          </div>
+          <div class="flex gap-2 ml-4">
+            <button data-action="edit-project" data-slug="${project.slug}" 
+                    class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors">
+              수정
+            </button>
+            <button data-action="delete-project" data-slug="${project.slug}" 
+                    class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors">
+              삭제
+            </button>
+          </div>
+        </div>
+      </div>
+    `
+      )
+      .join('');
+
+    // Add event listeners for project buttons
+    container.querySelectorAll('[data-action="edit-project"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const slug = (e.target as HTMLElement).dataset.slug;
+        if (slug) showProjectModal(slug);
+      });
+    });
+
+    container.querySelectorAll('[data-action="delete-project"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const slug = (e.target as HTMLElement).dataset.slug;
+        if (slug) deleteProject(slug);
+      });
+    });
+  }
+
+  function displayBlogPosts(posts: any[]) {
+    const container = document.getElementById('blog-list');
+    if (!container) return;
+
+    container.innerHTML = posts
+      .map(
+        post => `
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <h4 class="text-lg font-medium text-gray-900 dark:text-white">${post.title}</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${post.description || '설명 없음'}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">작성일: ${new Date(post.date).toLocaleDateString('ko-KR')}</p>
+          </div>
+          <div class="flex gap-2 ml-4">
+            <button data-action="edit-blog" data-slug="${post.slug}" 
+                    class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors">
+              수정
+            </button>
+            <button data-action="delete-blog" data-slug="${post.slug}" 
+                    class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors">
+              삭제
+            </button>
+          </div>
+        </div>
+      </div>
+    `
+      )
+      .join('');
+
+    // Add event listeners for blog buttons
+    container.querySelectorAll('[data-action="edit-blog"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const slug = (e.target as HTMLElement).dataset.slug;
+        if (slug) showBlogModal(slug);
+      });
+    });
+
+    container.querySelectorAll('[data-action="delete-blog"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const slug = (e.target as HTMLElement).dataset.slug;
+        if (slug) deleteBlog(slug);
+      });
+    });
+  }
+
+  // Project/Blog Management Functions
+  let currentEditingProjectSlug: string | null = null;
+  let currentEditingBlogSlug: string | null = null;
+
+  // Body scroll management for modals
+  function disableBodyScroll() {
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = getScrollbarWidth() + 'px';
+  }
+
+  function enableBodyScroll() {
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+  }
+
+  function getScrollbarWidth() {
+    const outer = document.createElement('div');
+    outer.style.visibility = 'hidden';
+    outer.style.overflow = 'scroll';
+    outer.style.width = '100px';
+    outer.style.height = '100px';
+    document.body.appendChild(outer);
+
+    const inner = document.createElement('div');
+    inner.style.width = '100%';
+    outer.appendChild(inner);
+
+    const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+    document.body.removeChild(outer);
+
+    return scrollbarWidth;
+  }
+
+  // Modal functions
+  function showProjectModal(slug?: string) {
+    const modal = document.getElementById('project-modal');
+    const title = document.getElementById('project-modal-title');
+    const form = document.getElementById('project-form') as HTMLFormElement;
+
+    if (slug) {
+      currentEditingProjectSlug = slug;
+      title!.textContent = '프로젝트 수정';
+      loadProjectForEdit(slug);
+    } else {
+      currentEditingProjectSlug = null;
+      title!.textContent = '프로젝트 추가';
+      form.reset();
+      (document.getElementById('project-slug') as HTMLInputElement).value = '';
+    }
+
+    disableBodyScroll();
+    modal?.classList.remove('hidden');
+
+    // Focus on first input for better UX
+    setTimeout(() => {
+      const firstInput = modal?.querySelector('input') as HTMLInputElement;
+      firstInput?.focus();
+    }, 100);
+  }
+
+  function closeProjectModal() {
+    document.getElementById('project-modal')?.classList.add('hidden');
+    enableBodyScroll();
+    currentEditingProjectSlug = null;
+  }
+
+  function showBlogModal(slug?: string) {
+    const modal = document.getElementById('blog-modal');
+    const title = document.getElementById('blog-modal-title');
+    const form = document.getElementById('blog-form') as HTMLFormElement;
+
+    if (slug) {
+      currentEditingBlogSlug = slug;
+      title!.textContent = '블로그 글 수정';
+      loadBlogForEdit(slug);
+    } else {
+      currentEditingBlogSlug = null;
+      title!.textContent = '블로그 글 추가';
+      form.reset();
+      (document.getElementById('blog-slug') as HTMLInputElement).value = '';
+    }
+
+    disableBodyScroll();
+    modal?.classList.remove('hidden');
+
+    // Focus on first input for better UX
+    setTimeout(() => {
+      const firstInput = modal?.querySelector('input') as HTMLInputElement;
+      firstInput?.focus();
+    }, 100);
+  }
+
+  function closeBlogModal() {
+    document.getElementById('blog-modal')?.classList.add('hidden');
+    enableBodyScroll();
+    currentEditingBlogSlug = null;
+  }
+
+  // Load data for editing
+  async function loadProjectForEdit(slug: string) {
+    try {
+      const response = await fetch('/api/admin/projects');
+      if (response.ok) {
+        const projects = await response.json();
+        const project = projects.find((p: any) => p.slug === slug);
+        if (project) {
+          const form = document.getElementById('project-form') as HTMLFormElement;
+          (form.querySelector('[name="title"]') as HTMLInputElement).value = project.title || '';
+          (form.querySelector('[name="description"]') as HTMLTextAreaElement).value =
+            project.description || '';
+          (form.querySelector('[name="tech"]') as HTMLInputElement).value =
+            project.tech?.join(', ') || '';
+          (form.querySelector('[name="category"]') as HTMLSelectElement).value =
+            project.category || 'web';
+          (form.querySelector('[name="demo"]') as HTMLInputElement).value = project.demo || '';
+          (form.querySelector('[name="github"]') as HTMLInputElement).value = project.github || '';
+          (form.querySelector('[name="status"]') as HTMLSelectElement).value =
+            project.status || 'planned';
+          (document.getElementById('project-slug') as HTMLInputElement).value = slug;
+        }
+      }
+    } catch (error) {
+      console.error('프로젝트 로드 실패:', error);
+      showMessage('프로젝트 정보를 불러오는데 실패했습니다', 'error');
+    }
+  }
+
+  async function loadBlogForEdit(slug: string) {
+    try {
+      const response = await fetch('/api/admin/blog');
+      if (response.ok) {
+        const posts = await response.json();
+        const post = posts.find((p: any) => p.slug === slug);
+        if (post) {
+          const form = document.getElementById('blog-form') as HTMLFormElement;
+          (form.querySelector('[name="title"]') as HTMLInputElement).value = post.title || '';
+          (form.querySelector('[name="description"]') as HTMLTextAreaElement).value =
+            post.description || '';
+          (form.querySelector('[name="tags"]') as HTMLInputElement).value =
+            post.tags?.join(', ') || '';
+          (form.querySelector('[name="author"]') as HTMLInputElement).value = post.author || '';
+          (form.querySelector('[name="content"]') as HTMLTextAreaElement).value =
+            post.content || '';
+          (form.querySelector('[name="published"]') as HTMLInputElement).checked = !post.draft;
+          (document.getElementById('blog-slug') as HTMLInputElement).value = slug;
+        }
+      }
+    } catch (error) {
+      console.error('블로그 글 로드 실패:', error);
+      showMessage('블로그 글 정보를 불러오는데 실패했습니다', 'error');
+    }
+  }
+
+  // Save functions
+  async function saveProject(formData: FormData) {
+    const submitBtn = document.getElementById('project-submit-btn');
+    const submitText = document.getElementById('project-submit-text');
+    const submitLoading = document.getElementById('project-submit-loading');
+
+    try {
+      submitBtn!.setAttribute('disabled', 'true');
+      submitText?.classList.add('hidden');
+      submitLoading?.classList.remove('hidden');
+
+      const data: any = {};
+      formData.forEach((value, key) => {
+        if (key === 'tech') {
+          data[key] = value
+            .toString()
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t);
+        } else {
+          data[key] = value;
+        }
+      });
+
+      const isEdit = currentEditingProjectSlug !== null;
+      const url = '/api/admin/projects';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      if (isEdit) {
+        data.slug = currentEditingProjectSlug;
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showMessage(result.message || '프로젝트가 성공적으로 저장되었습니다', 'success');
+        closeProjectModal();
+        await loadProjects();
+      } else {
+        showMessage(result.error || '프로젝트 저장 중 오류가 발생했습니다', 'error');
+      }
+    } catch (error) {
+      console.error('프로젝트 저장 오류:', error);
+      showMessage('프로젝트 저장 중 오류가 발생했습니다', 'error');
+    } finally {
+      submitBtn!.removeAttribute('disabled');
+      submitText?.classList.remove('hidden');
+      submitLoading?.classList.add('hidden');
+    }
+  }
+
+  async function saveBlog(formData: FormData) {
+    const submitBtn = document.getElementById('blog-submit-btn');
+    const submitText = document.getElementById('blog-submit-text');
+    const submitLoading = document.getElementById('blog-submit-loading');
+
+    try {
+      submitBtn!.setAttribute('disabled', 'true');
+      submitText?.classList.add('hidden');
+      submitLoading?.classList.remove('hidden');
+
+      const data: any = {};
+      formData.forEach((value, key) => {
+        if (key === 'tags') {
+          data[key] = value
+            .toString()
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t);
+        } else if (key === 'published') {
+          data[key] = true;
+        } else {
+          data[key] = value;
+        }
+      });
+
+      // If published checkbox is not checked, set to false
+      if (!formData.has('published')) {
+        data.published = false;
+      }
+
+      const isEdit = currentEditingBlogSlug !== null;
+      const url = '/api/admin/blog';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      if (isEdit) {
+        data.slug = currentEditingBlogSlug;
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showMessage(result.message || '블로그 글이 성공적으로 저장되었습니다', 'success');
+        closeBlogModal();
+        await loadBlogPosts();
+      } else {
+        showMessage(result.error || '블로그 글 저장 중 오류가 발생했습니다', 'error');
+      }
+    } catch (error) {
+      console.error('블로그 글 저장 오류:', error);
+      showMessage('블로그 글 저장 중 오류가 발생했습니다', 'error');
+    } finally {
+      submitBtn!.removeAttribute('disabled');
+      submitText?.classList.remove('hidden');
+      submitLoading?.classList.add('hidden');
+    }
+  }
+
+  // Delete functions
+  async function deleteProject(slug: string) {
+    if (!confirm(`"${slug}" 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/projects', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showMessage(result.message || '프로젝트가 성공적으로 삭제되었습니다', 'success');
+        await loadProjects();
+      } else {
+        showMessage(result.error || '프로젝트 삭제 중 오류가 발생했습니다', 'error');
+      }
+    } catch (error) {
+      console.error('프로젝트 삭제 오류:', error);
+      showMessage('프로젝트 삭제 중 오류가 발생했습니다', 'error');
+    }
+  }
+
+  async function deleteBlog(slug: string) {
+    if (!confirm(`"${slug}" 블로그 글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/blog', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showMessage(result.message || '블로그 글이 성공적으로 삭제되었습니다', 'success');
+        await loadBlogPosts();
+      } else {
+        showMessage(result.error || '블로그 글 삭제 중 오류가 발생했습니다', 'error');
+      }
+    } catch (error) {
+      console.error('블로그 글 삭제 오류:', error);
+      showMessage('블로그 글 삭제 중 오류가 발생했습니다', 'error');
+    }
+  }
+
+  // Event listeners
+  document.getElementById('add-project-btn')?.addEventListener('click', () => showProjectModal());
+  document.getElementById('add-blog-btn')?.addEventListener('click', () => showBlogModal());
+
+  // Modal close buttons
+  document.getElementById('close-project-modal')?.addEventListener('click', closeProjectModal);
+  document.getElementById('cancel-project-modal')?.addEventListener('click', closeProjectModal);
+  document.getElementById('close-blog-modal')?.addEventListener('click', closeBlogModal);
+  document.getElementById('cancel-blog-modal')?.addEventListener('click', closeBlogModal);
+
+  // Modal background click to close
+  document.getElementById('project-modal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+      closeProjectModal();
+    }
+  });
+
+  document.getElementById('blog-modal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) {
+      closeBlogModal();
+    }
+  });
+
+  // ESC key to close modals
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const projectModal = document.getElementById('project-modal');
+      const blogModal = document.getElementById('blog-modal');
+
+      if (projectModal && !projectModal.classList.contains('hidden')) {
+        closeProjectModal();
+      } else if (blogModal && !blogModal.classList.contains('hidden')) {
+        closeBlogModal();
+      }
+    }
+  });
+
+  // Form submissions
+  document.getElementById('project-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    await saveProject(new FormData(e.target as HTMLFormElement));
+  });
+
+  document.getElementById('blog-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    await saveBlog(new FormData(e.target as HTMLFormElement));
+  });
+</script>

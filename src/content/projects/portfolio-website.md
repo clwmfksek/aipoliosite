@@ -1,21 +1,18 @@
 ---
 title: '포트폴리오 웹사이트'
 description: 'Astro와 Tailwind CSS로 제작한 개인 포트폴리오 사이트'
-longDescription: '현대적인 웹 기술을 활용하여 제작한 정적 포트폴리오 웹사이트입니다. 빠른 로딩 속도와 SEO 최적화에 중점을 두어 개발했습니다.'
+longDescription: 'Astro와 Tailwind CSS로 제작한 개인 포트폴리오 사이트'
 tech: ['Astro', 'TypeScript', 'Tailwind CSS', 'MDX', 'Vercel']
 category: 'web'
-image: '/placeholder-portfolio.jpg'
-github: 'https://github.com/username/portfolio'
-demo: 'https://portfolio.example.com'
-status: 'in-progress'
-date: 2024-12-01
-featured: true
+image: '/placeholder-project.jpg'
+demo: 'https://aipoliosite.vercel.app/'
+github: 'https://github.com/clwmfksek/aipoliosite'
+status: 'completed'
+date: 2025-06-30
+featured: false
 published: true
-order: 1
-tags: ['frontend', 'astro', 'typescript', 'portfolio']
-seo:
-  title: '포트폴리오 웹사이트 - Astro & Tailwind CSS'
-  description: 'Astro 프레임워크와 Tailwind CSS를 사용하여 제작한 현대적인 포트폴리오 웹사이트'
+order: 999
+tags: ['astro', 'typescript', 'tailwind css', 'mdx', 'vercel']
 ---
 
 # 포트폴리오 웹사이트

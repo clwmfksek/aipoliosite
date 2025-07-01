@@ -37,9 +37,9 @@ export default defineConfig({
     webAnalytics: { enabled: true },
   }),
   build: {
-    // CSS를 별도 파일로 분리 (배포 문제 해결)
-    inlineStylesheets: 'never',
-    // 미사용 CSS 제거
+    // CSS를 항상 인라인으로 처리 (배포 문제 해결)
+    inlineStylesheets: 'always',
+    // 에셋 디렉토리
     assets: '_astro',
   },
   image: {

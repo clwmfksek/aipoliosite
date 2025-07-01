@@ -32,7 +32,7 @@ export default defineConfig({
           }),
         ]),
   ].filter(Boolean),
-  output: 'static',
+  output: 'server',
   adapter: vercel({
     webAnalytics: { enabled: true },
   }),

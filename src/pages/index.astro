@@ -8,6 +8,8 @@ import ContactSection from '../components/sections/ContactSection.astro';
 import StructuredData from '../components/seo/StructuredData.astro';
 import { getPortfolioData } from '../utils/portfolio-data';
 
+export const prerender = true;
+
 // 포트폴리오 데이터 로드
 const portfolioData = getPortfolioData();
 

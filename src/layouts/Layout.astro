@@ -2,6 +2,7 @@
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import SkipLink from '../components/SkipLink.astro';
+import '../styles/global.css';
 
 export interface Props {
   title?: string;
@@ -413,10 +414,5 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         });
       }
     </script>
-
-    <!-- 글로벌 스타일 -->
-    <style>
-      @import '../styles/global.css';
-    </style>
   </body>
 </html>
